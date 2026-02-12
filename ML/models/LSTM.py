@@ -8,6 +8,8 @@ from sklearn.model_selection import train_test_split
 from collections import Counter
 import numpy as np
 from sklearn.metrics import classification_report
+import json
+
 
 class LSTMModel(pl.LightningModule):
     def __init__(self, vocab_size, embedding_dim, hidden_dim):
@@ -34,14 +36,14 @@ class LSTMModel(pl.LightningModule):
         x, y = batch
         logits = self(x).view(-1)
         loss = self.criterion(logits, y.float())
-        self.log("val_loss", loss, prog_bar=True)
+        self.log("val_loss", loss, prog_bar=True, on_step=True)
         return loss
     
     def configure_optimizers(self):
         return optim.Adam(self.parameters(), lr=1e-3)
 
 # load data
-df = pd.read_csv("data/WELFake_Dataset.csv")
+df = pd.read_csv("ML/data/WELFake_Dataset.csv")
 
 # Preprocess Data
 df['title'] = df['title'].fillna("")
@@ -92,16 +94,24 @@ test_loader  = DataLoader(TensorDataset(X_test, y_test), batch_size=64, num_work
 
 # initialize and train model
 model = LSTMModel(vocab_size=len(vocab), embedding_dim=128, hidden_dim=256)
-trainer = pl.Trainer(max_epochs=10, accelerator="auto")
+early_stopping = pl.callbacks.EarlyStopping(monitor="val_loss", stopping_threshold=0.05, mode="min")
+trainer = pl.Trainer(max_epochs=10, accelerator="auto", callbacks=[early_stopping])
 trainer.fit(model, train_loader, val_loader)
 
+# set model to evaluation mode
+model.eval()
 
+# save weights
+torch.save(model.state_dict(), "lstm_classifier.pt")
+
+# save vocab
+with open("vocab.json", "w") as f:
+    json.dump(vocab, f)
 
 # --- chatgpt generated test evaluation code ---
 
 # evaluate on test set
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.eval()
 model.to(device)
 
 # containers for predictions and true labels
