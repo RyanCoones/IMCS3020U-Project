@@ -69,39 +69,66 @@ class BernoulliNaiveBayes:
 
 # ChatGPT generated test code
 if __name__ == "__main__":
-    from sklearn.model_selection import train_test_split
+    import os
+    import numpy as np
+    import pandas as pd
     from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-    from sklearn.naive_bayes import BernoulliNB
 
-    csv_path = "data/WELFake_Dataset.csv"
+    csv_path = "ML/data/WELFake_Dataset.csv"
+
+    # output folder for evaluate_all.py
+    preds_dir = "ML/artifacts/preds"
+    os.makedirs(preds_dir, exist_ok=True)
 
     model = BernoulliNaiveBayes(min_df=2, max_features=20000)
 
-    texts, y = model.load_data(csv_path)
+    # load full df so we can apply frozen splits
+    df = pd.read_csv(csv_path).reset_index(drop=True)
 
-    X_train_texts, X_test_texts, y_train, y_test = train_test_split(
-        texts, y, test_size=0.2, random_state=42, stratify=y
-    )
+    # ensure stable row_id exists
+    if "row_id" not in df.columns:
+        df["row_id"] = np.arange(len(df))
+        df.to_csv(csv_path, index=False)  # optional but keeps it stable for future runs
 
+    # load frozen splits
+    train_ids = pd.read_csv("ML/data/splits/train_ids.csv")["row_id"].to_numpy()
+    test_ids = pd.read_csv("ML/data/splits/test_ids.csv")["row_id"].to_numpy()
+
+    # select rows by row_id
+    df = df.set_index("row_id", drop=False)
+    train_df = df.loc[train_ids]
+    test_df = df.loc[test_ids]
+
+    # build texts the same way as load_data(): title + text
+    X_train_texts = (train_df["title"].fillna("") + " " + train_df["text"].fillna("")).to_numpy()
+    y_train = train_df["label"].to_numpy().astype(int)
+
+    X_test_texts = (test_df["title"].fillna("") + " " + test_df["text"].fillna("")).to_numpy()
+    y_test = test_df["label"].to_numpy().astype(int)
+
+    # train + predict
     model.fit(X_train_texts, y_train)
-
     y_pred = model.predict(X_test_texts)
 
+    # probability for "fake" (assumes label 1 = fake)
+    probs = model.predict_prob(X_test_texts)  # shape (n, 2)
+    prob_fake = probs[:, 1].astype(float)
+
+    # map to evaluate_all labels
+    true_label = np.where(y_test == 1, "fake", "real")
+    pred_label = np.where(y_pred == 1, "fake", "real")
+
+    # write predictions file
+    pred_df = pd.DataFrame({
+        "row_id": test_df["row_id"].to_numpy(),
+        "true_label": true_label,
+        "pred_label": pred_label,
+        "prob_fake": prob_fake,
+    })
+    pred_df.to_csv(os.path.join(preds_dir, "nb_test_preds.csv"), index=False)
+    print("Saved:", os.path.join(preds_dir, "nb_test_preds.csv"))
+
+    # optional: print metrics
     print("Accuracy:", accuracy_score(y_test, y_pred))
     print("Confusion matrix:\n", confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred, digits=4))
-
-    # Compare with sklearn's BernoulliNB
-
-    X_all = model.vectorizer.fit_transform(texts)
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X_all, y, test_size=0.2, random_state=42, stratify=y
-    )
-
-    sk = BernoulliNB(alpha=1.0)
-    sk.fit(X_train, y_train)
-    sk_pred = sk.predict(X_test)
-
-    print("sklearn Accuracy:", accuracy_score(y_test, sk_pred))
-    print(classification_report(y_test, sk_pred, digits=4))

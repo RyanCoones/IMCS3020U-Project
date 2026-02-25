@@ -1,0 +1,368 @@
+row_id,title,text,true_label,pred_bilstm,prob_bilstm,pred_gru,prob_gru,pred_lstm,prob_lstm,pred_nb,prob_nb,pred_rnn,prob_rnn,wrong_pred_bilstm,wrong_pred_gru,wrong_pred_lstm,wrong_pred_nb,wrong_pred_rnn,num_models_wrong,type_pred_bilstm,type_pred_gru,type_pred_lstm,type_pred_nb,type_pred_rnn,article_len,title_len,political
+2125,Kentucky governor: Electing Hillary Clinton may eventually lead to violence,"Kentucky Gov. Matt Bevin (R) told religious conservatives at the Values Voters Summit this weekend that blood might have to be shed if Hillary Clinton is elected president.
+
+""I want us to be able to fight ideologically, mentally, spiritually, economically, so that we don’t have to do it physically,” Bevin said Saturday. “But that may, in fact, be the case.""
+
+He added, citing Thomas Jefferson's ""blood of patriots and tyrants"" quote: ""The roots of the tree of liberty are watered by what? The blood. Of who? The tyrants, to be sure. But who else? The patriots. Whose blood will be shed? It may be that of those in this room. It might be that of our children and grandchildren.""
+
+Bevin, a tea party supporter who has been known to make a controversial comment or two, clarified his comments to the Lexington Herald-Leader, saying he was referring to military sacrifice.
+
+""Today we have thousands of men and women in uniform fighting for us overseas, and they need our full backing,” Bevin said in a statement. “We cannot be complacent about the determination of radical Islamic extremists to destroy our freedoms.""
+
+Bevin's comments echo a tea party rallying cry that has cropped up from time to time. Activists and even some lawmakers have cited Jefferson's quote to reinforce the stakes for their political movement.
+
+As for the 2016 campaign, Bevin's comments are the latest example of elected officials promising very bad things if the wrong candidate is elected. And it's not just Democrats warning about Donald Trump having his finger on the nuclear button — a prospect that has been the subject of a Hillary Clinton campaign ad.
+
+Former congresswoman Michele Bachmann (R-Minn.) warned recently that a Clinton win might mean this could be the ""last election"" in which Americans would be able to elect a president with ""godly moral principles.""
+
+Similarly, other Republicans have warned that nominating Trump might lead to the end of the Republican Party as we know it. George W. Bush even suggested he might be the last Republican president.
+
+Conservative talk show hosts have warned of even worse, up to and including civil war. But Bevin's comments appear to be the most full-throated warning about a Clinton presidency so far from a high-ranking GOP elected official.",real,real,0.0012405401,real,0.033445634,fake,0.968841,fake,0.9999999396077888,real,0.4995088,0,0,1,1,0,2,correct,correct,real→fake,real→fake,correct,379,10,True
+13879,Target Raises Free Shipping Purchase Amount for Online Shoppers as Other Retailers Lower It,"As other retailers have begun lowering the threshold for online shoppers to qualify for free shipping, retail giant Target is now raising its limit, according to reports. [Target quietly and without fanfare raised its minimum purchase requirement from $25 to $35 on May 7. The company had offered free shipping to purchases of $25 and above since 2015, according to CNBC.  “Target regularly reviews and adjusts our online shipping policies and practices to better serve guests and enhance our business,” the retailer said to a query from CNBC. Target credit and debit card holders will continue to get free shipping on any purchase, the company said. The hike in the minimum purchase comes after retailers like Amazon. com and Walmart had lowered their threshold for the perk. Amazon recently moved from $35 down to $25 while Walmart moved from $50 down to $35 in January. The unannounced change in shipping fees came only a week after news broke that company CEO Brian Cornell’s compensation was slashed by nearly   falling to $11. 3 million due to the company’s poor performance. Target has been beset by financial loss after a year of declining sales, tumbling share prices, and a major slide in its brand name. The company has seen four quarters of sales declines in a row and has a loss of over $15 billion year over year. And since April of last year, the company’s brand name has also taken a drubbing. The fall was bad enough that many investment advisers downgraded Target to a “strong sell” even as its falling price might seem to make it an attractive buy. The recommendations against Target were renewed this month when Gordon Haskett Research also advised customers to dump Target stock and replace it with Walmart stock. The investment advisor said Target is “moving too slow” to fix the problems leading to its precipitous decline. Target has seen falling fortunes since its April 2016 announcement that men pretending to be transgender women entering a Target location would be allowed to use any bathroom or changing room they felt like using at any given time. By February of this year the company lost $15 billion since its   announcement and had lost over $30 per share since its high last year. The chain also suffered a massive, organized boycott that earned over a million signatures in only a few weeks. Follow Warner Todd Huston on Twitter @warnerthuston or email the author at igcolonel@hotmail. com.",real,fake,0.9994311,real,0.060999386,fake,0.9541124,real,1.7876134259091075e-14,fake,0.59723884,1,0,1,0,1,3,real→fake,correct,real→fake,correct,real→fake,409,14,False
+17768,Mormon Church Backs LGBT Protection,"In a landmark move, the Church of Jesus Christ of Latter-day Saints announced Tuesday that it is changing its posture toward gays. The church has decided to support anti-discrimination legislation for gays and lesbians in the realm of housing and employment. The church also announced that it it comes with the condition that no one can be forced to perform actions if he or she has religious objections. One example, a doctor who refuses to artificially inseminate a lesbian couple. Utah is facing two bills that protections for each group. Political watchers in the state have noted that both measures would be likely to pass if the LDS Church got behind it.
+
+“When religious people are publicly intimidated, retaliated against, forced from employment or made to suffer personal loss because they have raised their voice in the public square, donated to a cause, or participated in an election, our democracy is the loser,” said Elder Dallin Oaks, a member of the church’s Quorum of Twelve Apostles. “Such tactics are every bit as wrong as denying access to employment, housing, or public services because of race or gender.”
+
+However, this month, the church was in hot water for planning to excommunicate a prominent critic of its same-sex marriage stance for the apostasy.
+
+",real,real,0.023466455,fake,0.53474057,fake,0.9940402,fake,0.9999999883173364,fake,0.5938068,0,1,1,1,1,4,correct,real→fake,real→fake,real→fake,real→fake,211,5,True
+19997,Round I in Iowa: Scott Walker Emerges,"Scott Walker 2016 begins today. After this speech to #FreedomSummit no way he doesn't become formidable presidential candidate.
+
+So, @ScottWalker is the breakout star of this thing so far, right? #IAFreedomSummit",real,fake,0.90372515,real,0.2467406,fake,0.9984633,fake,1.0,fake,0.5938068,1,0,1,1,1,4,real→fake,correct,real→fake,real→fake,real→fake,31,7,False
+22564,Defense Secretary Carter used personal email in first months on the job,"Defense Secretary Ash Carter used his personal email account to conduct some of his professional correspondence during his first months on the job earlier this year, the Pentagon admitted late Wednesday.
+
+Carter's use of the personal account was first reported by The New York Times, which said that he had been confronted about his email habits by White House Chief of Staff Denis McDonough this past May, three months after Carter took office as defense secretary.
+
+Pentagon spokesman Peter Cook released a statement saying that Carter believes his use of personal email for work-related business was a mistake. Cook declined to say whether it was a violation of Pentagon email policies. Cook also said Carter stopped the practice, but Cook did not say when.
+
+Carter also acknowledged the move was a mistake in an interview with CBS' “This Morning” on Thursday. He said he occasionally used his iPhone to send messages to immediate staff, but stressed no classified information was involved.
+
+The Times reported that Carter was assigned a government email account when he assumed his office in February, but continued to conduct most of his business on his private account, often sending messages via his iPhone or iPad. According to the paper, a former aide to Carter said that his boss used his personal account so often during that period that staffers feared he would be hacked.
+
+Pentagon policy since 2012 has been to bar all employees from conducting government business on personal email. Last year, a law signed by President Obama barred federal officials from receiving or sending emails from personal accounts unless the messages were either copied or forwarded into government accounts within 20 days. It was not immediately clear whether Carter followed that directive.
+
+The Times report comes in the midst of an FBI investigation into whether Hillary Clinton mishandled classified information by using a private account for all her emails while secretary of state. According to the Times, Carter continued to use his personal email at least two months after Clinton's practices were revealed in March.
+
+The Times said the emails it received under the Freedom of Information Act were exchanges between Carter and Eric Fanning, who was his chief of staff at the time and is now the acting secretary of the Army.
+
+
+
+The emails were on a variety of work-related topics, the Times said, including speeches, meetings and news media appearances. In one such email, Carter discussed how he had mistakenly placed a note card in a ""burn bag,"" the Times reported. Such bags are typically used to destroy classified documents.
+
+
+
+Cook said Carter ""does not use his personal email or official email for classified material. The Secretary has a secure communications team that handles his classified information and provides it to him as necessary.""
+
+
+
+Carter ""takes his responsibilities with regard to classified material very seriously,"" Cook said.
+
+The Associated Press contributed to this report.
+
+Click for more from The New York Times.
+
+",real,real,0.08960047,fake,0.89583385,fake,0.95266837,real,1.0284265129733986e-06,fake,0.5904712,0,1,1,0,1,3,correct,real→fake,real→fake,correct,real→fake,490,12,True
+31144,Exclusive Trump op-ed: We must clean up this corruption,"Why you should vote for me.
+
+For 17 months, I’ve traveled this country and met countless Americans from every walk of life. Your hopes have become my hopes and your dreams have become my dreams.
+
+I’ve been inspired on this journey by the millions of you who came to cheer a simple idea: that we can make America great again.
+
+Real change begins with immediately repealing and replacing job-killing Obamacare — Americans are experiencing soaring double-digit premium hikes, insurers are leaving, doctors are quitting, jobs are fleeing, and deductibles are through the roof.
+
+It also means immediately fixing our terrible trade deals, which have killed American jobs and crushed American incomes. This means renegotiating Bill and Hillary Clinton’s disastrous NAFTA and China deals that have deindustrialized the United States — importing unemployment and exporting our wealth.
+
+It means we don’t have to keep kids trapped in failing schools — that we can give every parent the right to send their kids to the school of their choice, including millions of low-income African-American and Hispanic children who have been failed for generations by Democratic politicians like Hillary Clinton.
+
+Real change also means draining the swamp of corruption in Washington. We must fix a rigged system in which political insiders can break the law without consequence and where government officials put special interests above the national interest. If we want to make America great again, we must clean up this corruption.
+
+Hillary Clinton has been the subject of an FBI criminal investigation into many crimes against this nation. Were she ever to be elected, it would trigger an unprecedented constitutional crisis — Hillary is likely to be under investigation for a long time, grinding our government to a halt.
+
+America has too many problems, too many things to fix, to mire our government in years of sordid corruption and criminal investigation.
+
+It is time to cut our ties with the failed politicians of the past, and embrace a bright, new future for all of our people.
+
+That’s what I’m offering in my Contract with the American Voter, a 100-day action plan to clean up corruption and bring change to Washington. It’s there for you to read at www.TheTrumpContract.com.
+
+In my Contract with the American Voter, I offer a historic pro-growth plan to create 25 million good paying jobs. We will cut taxes on middle-class Americans by 35%. We will eliminate every needless job-killing regulation. We will repeal and replace catastrophic Obamacare with new reforms that dramatically expand choice, substantially lower costs, and significantly improve the quality of care. And we will end the offshoring of American jobs.
+
+In my contract, I also offer a detailed plan to immediately secure the border, stop illegal immigration and keep radical Islamic terrorists out of our country. Hillary has pledged “open borders,” mass amnesty, and a 550% increase in Syrian refugees. America’s immigration officers described Hillary’s extremist plan as “the most radical immigration agenda proposal in U.S. history.”
+
+I will restore the constitutional rule of law and nominate Supreme Court justices who will do the same.
+
+Finally, I pledge to fight for the right of every child in American to grow up in safety and peace, and undertake a national effort to bring jobs, security and prosperity to our inner cities.
+
+I am asking for your vote, and to be your champion in the White House.
+
+Together, we will take our government back from the special interests — and we will Make America Great Again.
+
+Donald J. Trump is the Republican nominee for president.
+
+You can read diverse opinions from our Board of Contributors and other writers on the Opinion front page, on Twitter @USATOpinion and in our daily Opinion newsletter. To submit a letter, comment or column, check our submission guidelines.",real,fake,0.6004858,fake,0.6251467,fake,0.9601011,real,0.007670398361752,real,0.3789667,1,1,1,0,0,3,real→fake,real→fake,real→fake,correct,correct,626,9,True
+35724,Megyn Kelly Rips Into Donald Trump for His Attacks on a Federal Judge,"In their last meeting, Fox News anchor Megyn Kelly laughed with her former adversary, presumptive Republican nominee Donald Trump, tossing him a handful of softball questions he could swiftly bat away. But Kelly took a swing right at him on her show Thursday evening, blasting the billionaire for his comments about Gonzalo Curiel, the federal judge presiding over the civil fraud lawsuits against Trump University, whom Trump has claimed is biased because of his Mexican heritage.
+
+“This is out of line,” Kelly said, raising her voice. The Fox News host had planned to spend the segment talking about House Speaker Paul Ryan endorsing the candidate, but scrapped it when news broke a few hours before her broadcast that Trump told The Wall Street Journal that Curiel, a U.S. District Judge, had an “absolute conflict” presiding over a pair of cases in which plaintiffs accuse Trump University of duping them into paying thousands of dollars to learn Trump’s tricks of the real-estate trade. (According to one former employee of the now-defunct for-profit school, whose testimony was revealed on Tuesday, “Trump University was a fraudulent scheme” that “preyed upon the elderly and uneducated.”) The conflict, according to Trump, derives from the fact that Curiel is “of Mexican heritage” and a member of a Latino lawyers’ association. Curiel grew up in Indiana.
+
+Trump told the Journal that his plan to close off the U.S. border with Mexico and his stated stance against illegal immigration makes the fact that Curiel’s parents are Mexican immigrants relevant. “I’m building a wall. It’s an inherent conflict of interest,” he said.
+
+“The man is not Mexican. His parents are Mexican. He was born in Indiana. He has no conflict of interest,” Kelly deadpanned to the camera. “Now Trump is saying the judge needs to be investigated, someone should look into him, just because he’s ruled against Trump in this case repeatedly . . . That doesn’t make you biased. It doesn’t. Trump continues to attack a sitting federal judge who, by the way, did a lot to fight the drug cartels when he was a prosecutor, based on his ethnicity, suggesting he has an inherent conflict of interest because of his heritage. A Hispanic cannot judge a case against me, that’s what he’s saying.”
+
+This was the fired-up anchor many were hoping to see in Kelly’s first Fox Broadcast special in May, in which she sat down face-to-face with the candidate after a months-long feud that began when Kelly asked him a question about his treatment of women during the first G.O.P. debate in August. For months following the debate, Trump slammed Kelly as a lightweight, suggested the reason for her tough question was that she was menstruating, and encouraged his online supporters to do the same.
+
+Kelly harkened back to the months of harassment from Trump’s followers on Thursday night, subtly empathizing with what Judge Curiel could be about to go through at their hands. “Let me tell you, I guarantee you right now that this judge is getting threats, and vitriol and who knows what else,” she said.
+
+Kelly set the record straight before moving on to broader Trump news: ”There’s no conflict of interest whatsoever based on his ethnicity, just to clear up this man’s reputation, who is a sitting federal judge and has served the country for four years in that capacity.”",real,real,0.004308432,fake,0.88425565,fake,0.99880576,fake,0.903541859684126,real,0.4140445,0,1,1,1,0,3,correct,real→fake,real→fake,real→fake,correct,558,13,True
+38605,Run or wait? Tokyo's Koike faces dilemma ahead of Oct. 22 poll,"TOKYO - Tokyo Governor Yuriko Koike has made no secret of her desire to be Japan s first female prime minister - she even named her pet terrier  Sori , Japanese for  premier . But Koike, 65, whose fledgling Party of Hope poses a growing threat to Prime Minister Shinzo Abe s ruling bloc in an election this month, faces a tough choice: run now for a seat in parliament to become eligible for the top job, or wait and bet her party positions itself to win the next national poll. Abe called the Oct. 22 poll in hopes his Liberal Democratic Party-led bloc could keep its majority in the lower house, where it now holds a two-thirds  super majority , but Koike s party has upended forecasts.  If Koike resigns as governor little more than a year after defying Abe s LDP to run successfully for that post, she would risk a backlash from voters. Waiting might let her best shot at the premiership slip through her fingers.  If she thinks of the nation, it is important that she boldly announce her candidacy, present her ideas about important matters ... and debate policies head on,  Abe s ally, Chief Cabinet Secretary Yoshihide Suga, told reporters on Monday. Koike, a media-savvy former LDP member and defense minister, has said she would not resign as governor to run now, especially ahead of the 2020 Olympic Games, which Tokyo will host. But her carefully phrased remarks have failed to kill speculation that she will run. Candidates must register on Oct. 10, when the campaign officially starts. Koike is certain to be watching opinion polls as she weighs her decision.  A TV Asahi survey published on Monday showed 72 percent of respondents were negative about her potential candidacy. A separate NHK poll showed that support for Abe dropped seven points to 37 percent. Voters were split on Koike s new party, with about 47 percent having hopes for it, versus the same percentage with little or no expectations. Further complicating the outlook, Yukio Edano, an executive  of the failed opposition Democratic Party -  which last week decided to run no candidates of its own and have members run on the Party of Hope ticket - announced on Monday the formation of a new Constitutional Democratic Party of Japan with fellow liberals. It was not essential that Koike run this time around, her close ally, Masaru Wakasa, said on Sunday.   If there is a firm prospect of a change in government, party chief Koike might run for parliament, but if we can achieve a change in the  next, next  election, she doesn t have to run now,  Wakasa said during a debate on NHK. Koike, however, has already once blindsided Wakasa, who led   efforts to form the new party, by announcing, on the day Abe called the snap poll, that she would lead the Party of Hope herself, not entrust it to allies. On Monday, she told Jiji news agency her party aimed to run more than the 233 candidates needed to take a majority in the 465-seat lower house.  If you don t buy a lottery ticket, you can t win,  she said. But she again denied she would seek a seat in parliament now.  I was in national politics for 24 years and I have no intention to go back to a place where you can achieve nothing despite spending so much time,  she said. A former TV announcer who speaks Arabic and English and peppers her speeches with foreign words, Koike wants to build a  pro-reform, conservative  party to compete with the LDP, in part by cannibalizing the failed main opposition Democratic Party and luring smaller parties to her side. Her cool, polished demeanor belies a steeliness beneath.  She can take a punch with a smile and sharpen her knives at the same time,  said Jesper Koll, head of equity fund Wisdom Tree, who has followed Japanese politics for years. Like former prime minister Junichiro Koizumi, one of her past mentors, Koike promises to  break free of vested interests , a slogan that resonates with voters looking for an alternative to the LDP - although critics question just how different that alternative would be from Abe s LDP. To differentiate her party from the LDP, Koike has adopted popular policies, such as an end to atomic power amid public safety worries after the 2011 Fukushima nuclear crisis, and proposes to freeze a planned sales tax hike from 2019. But she also backs Abe s push to expand the role of the military overseas and his goal of revising the post-war constitution - although recently she has avoided focusing on the divisive issue of amending its pacifist Article 9. She has also said in the past that Japan should consider having nuclear weapons, breaking a taboo in the only country to suffer an atomic attack, and, like Abe, has visited the Yasukuni Shrine for war dead, seen in China and South Korea as a symbol of Japan s past militarism. Koike entered politics in a small reformist party and migrated through several other groups before joining the LDP and in 2008 became the first woman to run for head of the conservative party. She came in a distant third. ",real,fake,0.9992417,fake,0.9962649,fake,0.97677284,real,6.614113110944017e-42,real,0.40594175,1,1,1,0,0,3,real→fake,real→fake,real→fake,correct,correct,877,12,True
+38845,Kansas City Man Freed After 17 Years in Prison When His Doppelganger Is Found,"A Kansas City man was released after serving 17 years in jail for a robbery he didn’t commit when a man, who looked so much like him they could be twins, was finally discovered and brought to the court’s attention. [Richard Anthony Jones was convicted of a Roeland Park robbery committed in 1999, but since the first day he was arrested, Jones claimed he was innocent of the crime. While serving time in prison, he began hearing from other prisoners that he bore a striking resemblance to another known criminal.  After years of pleading his case, Jones, who was convicted solely on eyewitness testimony, finally received help from the Innocence Project who believed him enough to begin looking into the claim of a doppelganger who may have been the real culprit, the Kansas City Star reported. Jones’s lawyers investigated the prisoner’s story and believed they found the man everyone said looked so much like their client that they could pass as the same person. “We were floored by how much they looked alike,” said Jones’s attorney Alice Craig of seeing the other man who some believe committed the crime instead of Jones. The legal team then contacted the victim from the robbery to look at photos of the two men   . Photos of the two men show each with braided hair and a   goatee. The two look so similar that they could easily be mistaken as two photos of the same man. The victim agreed that she could not tell the two men apart and could now not be sure of her    testimony. Jones was arrested in 1999 after the victim picked him out of a police photo database. But Jones’s lawyers maintain that the police acted in a “highly suggestive” manner because Jones was the only suspect in the photo group shown to the victim who looked anything like the description the victim gave. Ultimately, Johnson County District Judge Kevin Moriarty ordered Jones’s release based on the new evidence. Further investigation revealed that the other man, known as “Ricky,” also lived very near the victim in 1999. The now released man was said to be angry for years about his incarceration, but when he looked at the photo of his doppelganger, even he had to admit that it was an easy mistake to make. Jones told the media he was happy to be with his children at long last. “When it comes to my kids, it’s been a rough ride, but they are now at an age where they can understand,” he said. Follow Warner Todd Huston on Twitter @warnerthuston, or email the author at igcolonel@hotmail. com.",real,real,0.25502673,fake,0.79543805,fake,0.99598914,fake,0.9999966647424928,fake,0.5242551,0,1,1,1,1,4,correct,real→fake,real→fake,real→fake,real→fake,438,14,False
+40531,"Extreme weather to cause extreme food shortages, task force finds","Food shortages and price hikes caused by extreme weather will be three times more likely over the coming decades, according to a new report.
+
+The U.K.-U.S. Taskforce on Extreme Weather and Global Food System Resilience found that unless better planning, modeling and trade arrangements are put in place, massive disruptions to our food supply — the kind that usually only occur once a century — will happen every 30 years.
+
+Extreme weather in areas that produce our most important crops is largely the cause. A massive drought is already underway in California — the world's richest food-producing region — causing a loss of 30% of its cropland at a value of nearly $2 billion.
+
+The U.S. isn’t alone in feeling the impact of extreme weather. Venezuela is undergoing beer shortages because of a heat wave. Violence has even struck food lines there.
+
+Countries that are heavy grain importers will be the most vulnerable to severe food impacts, the task force reported. Egypt has even begun taking steps to thwart shocks to its food supply by boosting wheat production. Food protests and riots broke out there in 2008 when food prices rose sharply.
+
+China is also taking preventative steps. Among other strategies to shore up supplies, it is securing agricultural production capacity in sub-Saharan Africa and elsewhere in the developing world.
+
+The U.S. and European Union will likely be sheltered from widespread impacts because of strong economies and the ability to outbid other countries for food supplies, the report found. Still, it says global cooperation needs to happen to prevent large food shocks. That means policy and trade agreements that take into account sharing water resources and banning restrictions on certain staple crops.
+
+Resiliency efforts are key to battling weather extremes and crop production. India, for example, is highly dependent on monsoon patterns for rainfall. Linked to those patterns is its agricultural system. A dramatic shift in weather could throw off productivity.
+
+With a “Godzilla” of an El Nino event predicted for this coming winter season in the U.S., an extreme weather case study on food supplies could be on the horizon.
+
+Steps should be taken now to prevent food problems in the future. The task force recommends five solutions:
+
+• Countries with high vulnerability to global grain production shocks should take measures to reduce their exposure.
+
+• Greater investments in agricultural research should be made to reverse losses in yield-gain and to improve food system efficiencies.
+
+• Unsustainable withdrawals of ground water and any unnecessary uses of non-renewable energy should be stopped.
+
+• Public-private partnerships, or cooperation between governments and businesses, should be fostered to lessen the potential impact of future global grain production shocks.
+
+• Better resiliency efforts should be developed to reduce risks and manage the effects of storms and extreme weather events.
+
+We often think of the immediate destruction that weather brings, whether through floods, wildfires, wind or snow. But the effects after the event can be just as serious. Food, shelter and water are the three basic prongs to survival, and all are coming under attack by extreme weather.
+
+Thomas M. Kostigen is the founder of TheClimateSurvivalist.com and a New York Times best-selling author and journalist. He is the National Geographic author of ""The Extreme Weather Survival Guide: Understand, Prepare, Survive, Recover"" and the NG Kids book "" Extreme Weather: Surviving Tornadoes, Tsunamis, Hailstorms, Thundersnow, Hurricanes and More!"" Follow him @weathersurvival, or email kostigen@theclimatesurvivalist.com.",real,real,0.28972495,fake,0.8113687,fake,0.9998387,real,6.338898933089997e-16,real,0.30016044,0,1,1,0,0,2,correct,real→fake,real→fake,correct,correct,568,10,False
+44573,"Ryan Endorses Trump, Trump Crushes Ryan’s Dreams","After his shotgun wedding to the presumptive GOP nominee last week, the House speaker is getting a glimpse of his future with a man who puts his dreams before anyone else’s.
+
+There’s no currently available evidence showing that Donald Trump’s entire campaign is just one big, deliberate effort to troll Paul Ryan.
+
+Since Ryan allied himself with the mogul, Trump has engaged in some of his worst behavior of the cycle, and his backers show no restraint in their eagerness to malign and mock the Speaker of the House. Any hoped-for Trump/Ryan Era of Good Feelings?
+
+On June 2, Ryan endorsed Trump. He said he made that decision because he believes a President Trump will help pass his forthcoming agenda.
+
+“Through these conversations, I feel confident he would help us turn the ideas in this agenda into laws to help improve people’s lives,” Ryan said. “That’s why I’ll be voting for him this fall.”
+
+One day later, Donald Trump welcomed Paul Ryan to the rest of his life by saying the federal judge overseeing a civil case against the now-defunct Trump University is unsuited for the job because he’s of Mexican ancestry (said judge, Gonzalo Curiel, was born in Indiana).
+
+Ryan responded to the comments in a press conference he held in Southeast D.C. to roll out the first item on his policy agenda, a series of proposals to fight poverty.
+
+The focus of the morning could have been on the fact that House Republicans finally decided to start talking about poverty—an issue their party has long declined to focus on. But the biggest news Paul Ryan made was his response to Trump.
+
+“Saying a person can’t do their job because of their race is sort of the textbook definition of racist comments,” he said, saying Trump’s comments on Curiel “should be absolutely disavowed.”
+
+“I’m not going to even pretend to defend them,” he added. “I’m going to defend our ideas. I’m going to defend our agenda. What matters to us most is our principles and the policies that come from those principles, and our ability to give the people of this country a better way forward.”
+
+Tuesday’s press conference, was suppose to highlight Ryan’s latest attempt to turn the page away from the insanity of the presidential election and back to the serious business of lawmaking. He has spent the past few weeks cutting campaign-style videos teasing the release of a series of proposals from House Republicans.
+
+The sad irony of all this is that Trump actually paid lip service to Ryan’s anti-poverty plan when he appeared on CBS’s Face the Nation on June 5.
+
+“Paul Ryan—well, I think we will agree on—as an example, he really focuses on poverty,” Trump told host John Dickerson. “He wants to take people out of poverty. So do I. And we’re going to come up with a plan.”
+
+But that comment was totally drowned out by the criticism Trump drew for saying on the same show that a Muslim judge would probably be just as unfair to him as a judge of Mexican ancestry.",real,real,6.056979e-05,real,0.027420556,fake,0.95195377,fake,0.999840615517476,fake,0.5266154,0,0,1,1,1,3,correct,correct,real→fake,real→fake,real→fake,512,7,True
+48668,Admit it: You love Tax Day! (Opinion),"Edward J. McCaffery is Robert C. Packard trustee chair in law and a professor of law, economics and political science at the University of Southern California. He is the author of ""Fair Not Flat: How to Make the Tax System Better and Simpler."" The opinions expressed in this commentary are solely those of the author.
+
+It turns out that the group for whom things ended well had significantly more positive recollections of the whole affair from its beginning. The psychology of it is simple to understand: Happy endings matter. Even an unpleasant experience can lead to happy memories in hindsight if it ends well.
+
+So too with taxes.
+
+Let's just say that when it comes to taxes for the average American, ""stuff"" happens (keeping the colonoscopy metaphor running), paycheck to tax-reduced paycheck. But recent statistics suggest that 8 out of 10 American taxpayers get a refund when they file their taxes, and the average amount is close to $3000 . That pays for a lot of stuff. To make the good news even better, tax filing has gotten rather simple for most people, with various software and service providers offering to do the dreaded paperwork for free. No filing headaches and a check to boot. What's not to like?
+
+The fact of the matter is there is plenty not to like when it comes to the U.S. tax system. For example, the laws are biased against two-worker marriages; taxes go up when two relatively equal earners marry, as the rate brackets for couples are less than double that for single filers. Taxes are also overly complex and essentially optional for the truly rich , who make their wealth off of their existing wealth, the largely untaxed returns from capital, rather than by getting ordinary paychecks like most of us.
+
+But now is not the time to explain such serious matters; the people are too busy spending their refunds. The once dreaded Tax Day has become a happy spending spree for most Americans. This state of short-term bliss follows from some deep trends in our tax laws. In brief, the U.S. income tax system is increasingly a wage tax, with limited taxes on capital (what the rich have) and limited deductions for most of us. For example, 3 out of 4 Americans using a standard deduction get no break for their charitable contributions. All of this has been hashed and rehashed by politicians, professors and pundits. But who has time for that? Let's go to our television sets and check out the commercials. One clever spot ran during the recent Super Bowl, suggesting that the Boston Tea Party -- a tax revolt -- could have been averted with free online filing, which the sponsor was eager to provide. Filling out 1040s was part of what made the income tax so odious for the masses for such a long time -- who doesn't remember our parents fretting over shoeboxes of receipts sometime in April, the cruelest month? Now as Tax Day approaches, we are flooded with advertisements about America getting its billions back, without even having to pay to prepare the forms. We get paid to play! Here is the happy ending that Kahneman and others have shown can mitigate the memories of unpleasantness past. The simple fact is that a simple tax is also rather simple to administer. Service providers kindly offer to help out the masses of befuddled Americans. Of course, these kind souls want their happy endings too. They are betting that once the large refunds become obvious to their customers, the grateful taxpayers-turned-consumers will happily purchase add-on services, such as ""audit protection insurance,"" or perhaps deposit the money in financial accounts managed by the provider. Just as lottery winners notoriously go on impulsive spending sprees, the ""found money"" of tax returns can finance many nice purchases. Of course, there are still those annoying matters of the deep unfairness of the tax laws, biased against modern families and wage earners, and in favor of the rich living off capital. No real bother -- stuff happens. Let others fret about fairness. As long as our taxpaying or colon procedures end with a smile -- or a check -- who has time to dwell on the bad stuff that came before?",real,fake,0.99994326,fake,0.98324835,fake,0.99929345,real,0.3988516070970744,real,0.4968517,1,1,1,0,0,3,real→fake,real→fake,real→fake,correct,correct,710,7,False
+49731,Donald Trump Call For Immediate Shutdown of Clinton Foundation,"Donald Trump called this morning for the Clinton Foundation to be ""shut down immediately,"" describing it as ""the most corrupt enterprise in political history"" in a Facebook post.
+
+""Hillary Clinton is the defender of the corrupt and rigged status quo,"" Trump wrote. ""The Clintons have spent decades as insiders lining their own pockets and taking care of donors instead of the American people.""
+
+Over the weekend, the Clinton campaign insisted the Clinton Foundation would stop accepting donations from foreign countries. They did not explain why such a suspension did not happen when Clinton served as secretary of state.
+
+Critics have pointed to a number of State Department-facilitated deals that involved foreign parties that had made donations to the Clinton Foundation. The 'Clinton system' involves selling access to bad guys.
+
+""What they were doing during Crooked Hillary's time as Secretary of State was wrong then, and it is wrong now,"" Trump wrote.
+
+Earlier this year, the FBI reportedly wanted to open an investigation of the Clinton Foundation after receiving an alert from a bank about suspicious activity by a foreign Clinton Foundation donor, but the Department of Justice (DOJ) nixed it, claiming their own investigation after the book Clinton Cash (now a documentary)was released could not substantiate those allegations the DOJ focused on.",real,fake,0.9507269,fake,0.5071021,fake,0.9952276,fake,0.9999999999999848,fake,0.5938068,1,1,1,1,1,5,real→fake,real→fake,real→fake,real→fake,real→fake,212,9,True
+51213,Pro-Lifers Take over Planned Parenthood's #PPShoutYourStory,"Pro-lifers have taken to social media to use Planned Parenthood's own campaign hashtag against them.
+
+Planned Parenthood centers and supporters across the country took to Facebook and Twitter encouraging women to share how Planned Parenthood has helped them, using the hashtag #PPShoutYourStory.
+
+Clinics posted messages like this one, hoping for positive participation around the country:
+
+""As part of the ?#?PPShoutYourStory? campaign, people around New Mexico have been sharing their stories of how Planned Parenthood has impacted their lives. Participate in our all-out Twitter rally to shout your story about what Planned Parenthood means to you. Thursday, July 16 at 12:30 p.m. MT. Save the date!"" posted on Planned Parenthood Votes Colorado Facebook page.
+
+Thousands of people have joined in on the hashtag to share their stories, but not in the way the organization hoped for. A quick click on the hashtag displays countless stories of women permanently traumatized from their visits to Planned Parenthood.
+
+""Hey planned parenthood: I was born alive in one of your clinics, burned in my mother's womb for 18 hrs #PPShoutYourStory"" @giannajessen.
+
+""I had an abortion at 16 & regret it every day. I wish I had a 37 yo & grandkids instead of regret. #PPShoutYourStory"" @GeorgetteForney
+
+""I'm married 23 yrs two lovely kiddos and a successful new business #noChildsacrificed #PPShoutYourStory"" @conservgal
+
+""Actually women do excel w/o it costing the lives of their babes-That's my story #PPShoutYourStory #PPSellsBabyParts"" @Kyleenwright
+
+""Let me disclose my shame. I have had two abortions. Two...Twenty years ago, unmarried but in a relationship I thought would be my last, a violent morning sickness revealed to me that I was with child. The man in my life, at 24, was a mental boy and couldn't or wouldn't face fatherhood. And I was a coward, afraid to lose him,"" Julie Ludlum posted on her Facebook page.
+
+""So with grief and disgust, I went to Planned Parenthood. I was cavalierly offered a video about something but not given other options and had no individual counsel...I swore to myself it would never happen again. Ten years later, different man, same scenario. This time, I begged him to please, please let me keep this child...I share your disgust and frustration, but abortion number two still happened,"" she wrote.
+
+""That was Thomas, and I nearly followed him into death out of guilt and self loathing and a very tempting bridge over San Diego traffic. But I'm here. My life and my horrible sins have been redeemed through the work of Jesus on the cross...So I will continue to post information about Planned Parenthood because ?#?PPkillsbabies? and ?#?PPsellsbabyparts?... ?#?DefundPP? Don't ?#?StandwithPP.?""
+
+Ludlum did not use the hashtag in her original post, but several of her friends included it as they shared her story on Facebook.
+
+""Between our culture's declarations of belief that abortion revolves around a woman's personal choice are other women out of their depths responding by their actions a potential child was never nor ever will be a sheer choice, despite attempts to make it one. #PPShoutYourStory,"" Sean Brendon Stewart wrote.",real,real,0.089996845,fake,0.59394336,fake,0.99685246,fake,1.0,real,0.29202482,0,1,1,1,0,3,correct,real→fake,real→fake,real→fake,correct,504,6,True
+54610,"ACLU Launches Nationwide Training on Protest, Resistance Against Trump","CORAL GABLES, Fla. (AP)  —   The American Civil Liberties Union staged a nationwide training event Saturday to make sure people are aware of their rights as protesters and urge organized, public resistance by those opposed to policies of President Donald Trump. [advertisement",real,real,0.45638627,fake,0.9918726,fake,0.97906667,fake,0.999999999999978,fake,0.64770466,0,1,1,1,1,4,correct,real→fake,real→fake,real→fake,real→fake,42,9,True
+57180,Worth a shot: Former Pennsylvania police officer's vending machines sell ammo,"You can buy snacks, condoms, fishing bait, marijuana and even gold from vending machines, so Sam Piccinini figured, “Why not bullets?”
+
+A 25-year police department veteran who now runs his own ammunition manufacturing and wholesale business, Piccinini, of Rochester, Pa., has two of his retrofitted vending machines at his local gun club. The machines, which sell nearly every caliber of bullet from .22 to .45, are doing a brisk business and, Piccinini said, other clubs want his machines.
+
+“I have clubs lining up at my door wanting them,” Piccinini told FoxNews.com. “I have five clubs chomping at the bit, wanting these machines.”
+
+Piccinini, who owns Master Ammo Co., a licensed manufacturer of ammunition, said he got the idea two years ago, when bullet shortages around the nation left members of the Beaver Valley Rifle & Pistol Club unable to buy the “non-jacketed” rounds preferred at most shooting ranges.
+
+First, Piccinini asked local attorney Eugene Martucci if such a machine would be legal. Told such a device could be operated lawfully, Piccinini bought a vending machine and had some modifications made to it, allowing it to accept larger bills and credit cards and to hoist and dispense bags of .45-caliber Automatic Colt Pistol cartridges. He figures he spent about $4,000 on the first vending machine. He now has two of them at the club and a third ready to be deployed.
+
+Piccinini’s machines sell both handgun and rifle ammunition, which are regulated differently. In Pennsylvania, people ages 18 and over can buy long gun ammunition and people over 21 can buy bullets for handguns. Critics say selling from a machine, without an attendant to ensure the purchase is legal, poses a problem.
+
+Piccinini likens his machines to cigarette vending machines in social clubs, noting that a prominent sticker on them states, “You must be 21 years of age to purchase ammunition for use in handguns from this machine.” Since the club does not admit minors without adult guardians, and since anyone entering must pass through a security gate and swipe an ID card to enter, Piccinini does not believe there is a risk of illicit sales.
+
+“It's not like someone walking off the street can get in and buy ammunition,” Piccinini said.
+
+Selling bullets out of a vending machine, as opposed to over a counter, is ""not a big deal,"" said Ladd Everitt, spokesman for the Washington-based pro-gun control group Coalition to Stop Gun Violence.
+
+""Ammunition is widely available at ranges to begin with,and we don't take issue with that,"" Everitt said. ""If they put it in a school, call me back.""
+
+The federal Bureau of Alcohol, Tobacco, Firearms and Explosives regulates sales of ammunition, and Piccinini has permits allowing him to manufacture, sell and even export guns and ammunition. Stephen Bartholomew, of the BATFE's Philadelphia field office, told the BeaverCountian.com he had never come across vending machines that sell ammunition.
+
+“I don’t want to speculate as to what is or is not happening in this particular situation, but a licensee cannot sell ammunition to anyone under the age of 18 and, importantly, you cannot sell handgun ammunition to individuals under the age of 21,” he said.
+
+The club makes no money off of sales or for renting space for the machines, which Piccinini, who sells ammunition to retailers and police departments in Pennsylvania, hopes will become a growing part of his company.
+
+“The club doesn’t receive any profits and the machines are strictly there for the convenience of its members,” said Piccinini.
+
+The club is not looking for publicity for the machines, according to its president, Bill Fortuna.
+
+“This has been kept a secret, it’s nobody’s business, it’s our club, we can do as our members allow us,” Fortuna told BeaverCountian.com. “Legally, there’s nothing anybody can do about it.”
+
+Piccinini, who is running for Beaver County sheriff, a post he has twice sought unsuccessfully, believes criticism he has received for his brainchild will ultimately backfire and win him the votes of Second Amendment advocates in the March 19 Republican primary.
+
+""Some people have been critical, but I think even more people support me and support the right to bear arms,"" he said.",real,fake,0.999798,real,0.49893415,fake,0.9985856,real,0.0193614111352747,fake,0.61504215,1,0,1,0,1,3,real→fake,correct,real→fake,correct,real→fake,692,11,True
+58932,"Merkel Stands by Migrant Policy, Fights Terrorism with Compassion","In her New Year’s speech, Chancellor Angela Merkel affirmed that her government will win the fight against terrorism with compassion and denied that her   mass migration policy, which directly brought terrorists to Germany, was wrong. [advertisement",real,real,0.004962457,real,0.44964626,fake,0.9808569,fake,0.9999999999999054,fake,0.55440915,0,0,1,1,1,3,correct,correct,real→fake,real→fake,real→fake,36,9,False
+61982,"Donald Trump, president of the Confederacy: The Southern strategy created the GOP civil war","Of course, Republicans and conservatives find these twin facts offensive and unbelievable. They hold onto their founding myth of Lincoln and “Great Emancipator” while simultaneously being dependent on voters from the former Confederacy for power—states that still fly and honor the American swastika, a rebel flag of treason and anti-black hatred.
+
+Despite their protests, the evidence is overwhelming.
+
+The ascendance of Donald Trump and his coronation as the presumed 2016 Republican presidential candidate is the logical outcome of a several decades-long pattern of racism, nativism, and bigotry by the American right-wing and its news entertainment disinformation machine.
+
+For example, in response to the triumphs of the black freedom struggle and the civil rights movement, the Republican Party has relied on the much discussed “Southern Strategy.” Lee Atwater, master Republican strategist and mentor to Karl Rove explained this approach as:
+
+You start out in 1954 by saying, “N****r, n****r, n****r.” By 1968 you can’t say “n****r”—that hurts you, backfires. So you say stuff like, uh, forced busing, states’ rights, and all that stuff, and you’re getting so abstract. Now, you’re talking about cutting taxes, and all these things you’re talking about are totally economic things and a byproduct of them is, blacks get hurt worse than whites.… “We want to cut this,” is much more abstract than even the busing thing, uh, and a hell of a lot more abstract than “N****r, n****r.”
+
+Ronald Reagan and other Republican elites would leverage Atwater’s approach to winning white voters and elections. To point, Reagan began his 1980 presidential campaign in Philadelphia, Mississippi, the locale where American civil rights freedom fighters Andrew Goodman, Michael Schwerner and James Chaney were killed by white racial terrorists. In that speech, Reagan signaled to the ghosts of Jim and Jane Crow and the neo-Confederacy by stating his support for “states’ rights.”
+
+Reagan would continue to use overt and coded racial appeals to gin up white support through his references to a “lazy,” “violent” and “parasitic” class of black Americans who he described as “welfare queens” and “strapping bucks.” George Bush would continue with the Southern Strategy when he summoned up white racist stereotypes and fears of “the black beast rapist” in the form of Willie Horton during the 1988 presidential election.
+
+The Age of Obama witnessed an explosion of anti-black racism by the Republican Party and conservatives en masse. Birtherism, the rise of the Tea Party, the use of antebellum language (which was used to defend the Southern slaveocracy) such as “secession” and “nullification”, both overt and coded racist invective by Republican officials and news media, and a pattern of disrespect towards both the idea and literal personhood of Barack Obama as the United States’ first black president has been the norm. This deluge of anti-black animus towards Barack Obama does not exist in a separate universe outside of American society: it has real impact on the values and behavior of citizens.
+
+To wit: in discussing his recent work on racial attitudes and political polarization, Professor Michael Tesler has noted how:
+
+In all, Barack Obama’s presidency has been so disruptive to the white right-wing political imagination that it has resurrected a type of overt racism which was thought to be largely vanquished from American public life.
+
+The intersection of white racism (“modern” and “old-fashioned”), nativism, a sense of white victimhood, and grievance mongering in the form of conspiracy theories and other unfounded beliefs is evident in other ways as well.
+
+Fifty-four percent of Republicans believe that Barack Obama is a “secret Muslim.” Forty-four percent also believe that Obama was not born in the United States. Forty-two percent of Republicans believe that Muslims should be banned from the United States. Sixty-four percent of Republicans believe that “racism” against white people is as big a problem as discrimination against black Americans.
+
+In a recent survey by the Pew Research Center, 66 percent of Republican and Republican-inclined respondents want to return to the “good old days.. This number is higher for Trump backers. It is important to note that this era was one of Jim and Jane Crow anti-black racism, legal sexism, and unapologetic discrimination against gays and lesbians. This yearning for a return to a fictive golden age of white male Christian domination over American social and political life is reflected in other work that shows how white people are much more pessimistic about their futures than Hispanics and African-Americans. Donald Trump is not a political genius. He understands what the Republican base yearns for and has been trained to believe–like a sociopolitical version of Pavlov’s dog–by its leaders. Trump says that Muslims should be banned from the United States because Republican voters respond to such hatred and intolerance. Trump lies that undocumented Hispanic and Latino immigrants are rapists and killers who want to attack white women because Republican voters find such rhetoric compelling. Trump uses social media to circulate white supremacist talking points about “black crime” because modern conservatives nurtured on “law and order” politics believe that African-Americans are out of control “thugs” possessed of “bad culture” who live to prey on innocent and vulnerable white people. Trump talks about China “raping” the United States because this arouses anger and fear of a new “yellow peril” where the manhood and honor of (white) America is sacrificed to a “sneaky” and “scheming” “Oriental” horde who twist their Fu Manchu mustaches and seduce white women in opium dens while simultaneously negotiating multibillion dollar trade deals. And perhaps most damning, Donald Trump has been endorsed by neo-Nazis, white nationalists, and the Ku Klux Klan: he has been reluctant to publicly reject and denounce their support. The corporate news media has aided and abetted “Trumpmania” by normalizing his racist, nativist and bigoted behavior. In response to Trump’s crucial win in last week’s Indiana primary, Slate’s Isaac Chotiner skewered this failure of journalistic integrity and responsibility among the TV news chattering class as: On TV Tuesday night, there was hardly a whimper. CNN, MSNBC, and Fox contented themselves with bright chatter about Ted Cruz’s hurt feelings, about Donald Trump’s political skill, about the feckless, pathetic Republican establishment. None of the commentators I saw mentioned the import of what was happening. Large chunks of the media have spent so long domesticating Trump that his victory no longer appeared momentous. He is the new normal….There was little talk of ideology, or racism, or bigotry, or fascist appeals. Instead, the conversation was about process; Trump had been fit into the usual rhythms of an election season. The closest thing I heard to open-mouthed shock came from Rachel Maddow, who wondered, correctly, why out of 330 million people the Republican Party had chosen this particular reality-television star. Elizabeth Bathory was a 16th century Hungarian countess who killed hundreds of young virgin girls and then bathed in their blood with the hope that it would maintain her beauty. Since at least the end of the civil rights movement, the Republican Party and movement conservatives have followed a similar “beauty” regimen. Instead of the blood of female virgins, they have washed themselves in racism and bigotry in order to buoy their political vitality. Donald Trump decided to move this political ritual out of the shadows and into the light of prime time television and the 24/7 news cycle. Trump, with his background in professional wrestling and reality TV simply took what has always been implied by the American Right-wing and made it obvious. The question now becomes, will Trump’s version of Elizabeth Bathory be enough to defeat Hillary Clinton and win the White House in November 2016?",real,real,0.04013548,real,0.21353693,fake,0.98758626,fake,1.0,fake,0.5202139,0,0,1,1,1,3,correct,correct,real→fake,real→fake,real→fake,1257,14,True
+62845,The Latest On Paris Attack: Manhunt Continues; Brothers Were On No-Fly List,"The Latest On Paris Attack: Manhunt Continues; Brothers Were On No-Fly List
+
+French authorities are still on the hunt for two brothers suspected in an attack against the headquarters of a satirical magazine in Paris that left 12 people dead.
+
+The two chief suspects, named as Said and Chérif Kouachi, 34 and 32, remain at large. Investigators believe Said Kouachi traveled to Yemen in 2011 to receive weapons training with Al-Qaeda in the Arabian Peninsula, NPR's Dina Temple-Raston reports, citing U.S. officials who've been briefed on the case.
+
+Both of the brothers have been on the U.S. no-fly list for years, U.S. officials tell NPR.
+
+NPR's Eleanor Beardsley reports that the French capital is on its highest alert level, and 800 soldiers and riot police have been called on to guard the city. Schoolchildren, Eleanor said, are being kept inside for recess.
+
+To add to the tension, there was a shooting on Paris' southern edge that killed a police officer and wounded a street sweeper. Bernard Cazeneuve, France's Interior Minister, said those shootings had not been linked to the attack on Charlie Hebdo.
+
+Overnight, one of the three suspects, identified by French media as 18-year-old Mourad Hamyd, was reported to have turned himself in.
+
+Cazeneuve said nine people had been detained in connection to the attack.
+
+Local officials say mosques were targeted across the country late Wednesday and early today. There were no reports of injuries, and it's unclear if they are linked to the attack on Charlie Hebdo. But Cazeneuve said the country would not tolerate any attacks on places of worship.
+
+This is a breaking news story. As often happens in situations like these, some information reported early may turn out to be inaccurate. We'll move quickly to correct the record and we'll only point to the best information we have at the time. Refresh this page for the latest.
+
+Update at 5:55 p.m. ET. Suspects Were On U.S. No-Fly List
+
+NPR has confirmed that both Cherif and Said Kouachi have been on the U.S. no-fly list for years. They're also in the central U.S. database of people who pose a known or potential terrorist threat, worldwide: the Terrorist Identities Datamart Environment.
+
+Update at 3:15 p.m. ET. Eiffel Tower Goes Dark
+
+In honor of the victims of Wednesday's attack, the Eiffel Tower turned off its lights. The mayor of Paris, Anne Hidalgo, tweeted a series of images showing the famous landmark going dark.
+
+Update at 1:03 p.m. ET. No Link:
+
+Bernard Cazeneuve, France's Interior Minister, said authorities had not found a link between today's shootings and the attack on Charlie Hebdo.
+
+— Police found Said Kouachi's ID in a car used by the men to get away. As soon as they learned that name, police launched a manhunt and searched the home of the Kouachi brothers.
+
+— Nine people are presently in custody in connection with the attack.
+
+— Two people who looked like suspects were seen in Villers-Cotterêts, where police launched an intense search near a gas station.
+
+— Police have heard from more than 90 witnesses and are reviewing Internet use and surveillance to try to find the two men.
+
+— Cazeneuve said Said Kouachi had never been accused or convicted of a crime like his brother but had surfaced at the ""periphery of some investigations.""
+
+Update at 12:36 p.m. ET. Dusk In Paris:
+
+The sun has now set in Paris, reporter Lauren Frayer tells our Newscast unit.
+
+She's at the Place de la République, where she says for the second night in a row people are streaming in for an impromptu vigil.
+
+Lauren reports that the city only came to a halt at noon today for a moment of silence. But even though there is man hunt ongoing, Parisians have gone about their business: shops and restaurants are open and the metro is running.
+
+Asteris Masouras, a freelance journalist in Paris, has been tweeting from the scene — pictures of demonstrators carrying posters that read Je Suis Charlie and others leaving candles at the foot of the statue in the center of the square.
+
+Masouras also tweeted a video that shows the crowd whispering La Marseillaise, France's national anthem.
+
+France's Interior Ministry says that more than 88,000 personnel have deployed across France to help with security after the attacks.
+
+In the Paris district alone, 9,650 personnel were deployed, including more than 1,000 military personnel.
+
+Update at 10:16 a.m. ET. The Younger Suspect's Name:
+
+There is some variance in the way the name of the third suspect in this case is being reported. For now, based on reporting by the AFP and other French outlets who have spoken to classmates, we will call the suspect Mourad Hamyd.
+
+Earlier, we had named him as Hamyd Mourad.
+
+Update at 9:44 a.m. ET. 'Stupidity Will Not Win':
+
+Update at 7:19 a.m. ET. Not Linking Suspects To Terrorist Groups:
+
+Counterterrorism officials have been careful not to link the two main suspects to terrorist groups, NPR's Dina Temple-Raston tells our Newscast Unit.
+
+One of the men, Chérif Kouachi, was convicted on terrorism charges in 2008. He served 18 months for helping to funnel fighters from France to Iraq.
+
+What's unclear, said Dina, is what happened to Kouachi after that. It's unclear whether he has ever traveled to Syria and it's unclear whether he has developed links to terrorist groups — including the Islamic State — since 2008.
+
+Judging by the shot patterns left on a police cruiser yesterday, what is clear is that the two suspects were very comfortable using high-powered weapons. It's likely, Dina said, that they received some military training. The question is where.
+
+Update at 6:44 a.m. ET. Roads Shut Down:
+
+NPR's Eleanor Beardsley reports that police have shut down all roads in and out of Paris.",real,real,0.07622098,real,0.10274385,fake,0.9992567,real,7.95094967694228e-15,real,0.49221018,0,0,1,0,0,1,correct,correct,real→fake,correct,correct,959,12,False
+63206,"Fake News: Wilders Slams Foreign Criminals, Media Twists Words Into Attack on All Moroccans - Breitbart","Mainstream media outlets in Britain such as the BBC and the Observer have falsely implied that   populist firebrand Geert Wilders made an attack on all Moroccan migrants in the Netherlands when he blasted foreign criminals, in headlines on their websites. [“There is a lot of Moroccan scum in Holland who make the streets unsafe” said Mr Wilders, who leads in the polls ahead of the March 15 parliamentary vote, to kick off his campaign on Saturday.  “And that should change” the Party for Freedom (PVV) figurehead said, emphasising that “not all are scum” as he attempted to take a stroll through a market. But despite Wilders making clear his remarks referred only to Moroccans who “make the streets unsafe” both the headline and first paragraph of the Observer’s report of the exchange make the claim that the   Prime Minister called all migrants from the North African country “scum”. Entitled “  leader Geert Wilders calls Moroccan migrants ‘scum’” the Observer article begins: ‘The Dutch populist leader Geert Wilders sparked outrage on Saturday when he launched his election campaign with a stinging attack on the country’s Moroccan population. The   MP called them “scum” and said he wanted to make the Netherlands “ours again’ It’s not revealed until the third paragraph, in which the   newspaper quotes the populist politician in full, that Mr Wilders specifically singled out criminal migrants in his speech. Sky’s coverage of Wilders’ remarks is similarly misleading. Under a headline which declares that “  Dutch MP Geert Wilders attacks ‘Moroccan scum’” Sky News uses the piece’s lede to tell readers: “The MP begins his election campaign by blaming the “Moroccan scum” for “making the streets of Holland unsafe. “Dutch MP Geert Wilders has launched his campaign for Holland’s top job with an attack on the country’s Moroccans” begins the article in a clear implication that the PVV figure attacked everyone living in Holland who hails from the North African nation. Britain’s public service broadcaster makes the same inference, its headline blaring: “Dutch populist Geert Wilders talks of Moroccan ‘scum’”. The populist politician, who has promised to shut mosques and bring an end to mass immigration from Muslim countries if elected, was speaking in his party’s   stronghold of Spijkenisse, just south of Rotterdam. “If you want to regain your country, if you want to make the Netherlands for the people of the Netherlands, your own home again, than you can only vote [for the PVV],” Wilders told supporters and the press. “Please, make the Netherlands ours again. ” De Volkskrant reported in 2013 that Moroccan criminals were convicted four times more than Dutch suspects. According to the country’s 2011 census, there were more than 167, 000   people in Holland, a figure that does not take into account second or   Moroccans. A report commissioned by the Dutch Ministry of Interior found that most of the Moroccan youth involved in criminal activities were born in Holland. According to the Gatestone Institute, 65 per cent all Moroccan male youths between the ages of and 12 and 23 have been detained by police at least once, with one third of this group having been detained five or more times. Mr. Wilder’s comments come as he rides high in the polls at the Netherlands approaches election day. Although other Dutch political parties have vowed to not enter into a coalition with Mr. Wilders’ Freedom Party, present polling suggests he should lead the largest party on March 16th, which may force others to soften their stance.",real,real,6.067956e-06,real,0.003030005,fake,0.99749595,real,1.5443831206177942e-06,fake,0.72075117,0,0,1,0,1,2,correct,correct,real→fake,correct,real→fake,579,16,True
+68136,Putin's proposed U.N. Ukraine peacekeepers must have full access: Merkel,"BERLIN(Reuters) - Any United Nations peacekeepers sent to eastern Ukraine must be granted access to the entirety of the region held by Moscow-backed separatists, German Chancellor Angela Merkel said. Russian President Vladimir Putin floated the idea of deploying U.N. troops to eastern Ukraine in a Monday call with Merkel, suggesting that the U.N. mission could protect observers from the international OSCE monitoring mission. With growing calls in Germany for the lifting of European Union sanctions against Russia over its activities in Ukraine, Moscow has been keen to float proposals that would help soften export bans that have hit Russians  living standards.   I find President Putin s proposal to send U.N. troops to protect OSCE observers interesting,  she told the FUNKE newspaper group on Friday.  A few days ago I discussed with him that the U.N. troops must have access to everywhere where the OSCE is stationed, so the entire Donetsk/Luhansk region.  The conflict between Ukrainian forces and Russian-backed separatists has claimed more than 10,000 lives since it erupted in 2014. Russia denies Western accusations it fomented the conflict and provided arms and fighters. The observers are there to monitor implementation of a peace deal agreed in Minsk in 2015, which has been largely unsuccessful in settling the conflict despite German and French urgings. Some German politicians have said sanctions should be lifted if the peace deal is implemented. Christian Lindner, leader of the Free Democrats, a likely coalition partner for Merkel after Sept. 24 elections, even suggested Germany must accept Russia s occupation of Ukraine s Crimean peninsula. Merkel said Putin s proposals were  tender shoots  of progress,  which give no cause for softening sanctions  so far. She rejected Lindner s proposal.  The annexation is against international law and must not be accepted,  she said. ",real,fake,0.99908197,fake,0.9837467,fake,0.98935926,real,2.17344008877092e-21,fake,0.5938068,1,1,1,0,1,4,real→fake,real→fake,real→fake,correct,real→fake,295,10,True
