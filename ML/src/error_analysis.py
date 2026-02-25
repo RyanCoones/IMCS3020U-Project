@@ -84,9 +84,14 @@ for f in pred_files:
             how="left"
         ).rename(columns={"prob_fake": f"prob_{model}"})
 
-
 model_cols = [f"pred_{m}" for m in model_names]
 
+# keep only rows that appear in predictions
+first_model = model_cols[0]
+master = master[master[first_model].notna()].copy()
+
+# test
+print(len(master))
 
 # =========================
 # ERROR FLAGS
@@ -125,7 +130,14 @@ for col in model_cols:
 # AUTO FEATURES
 # =========================
 
-master["article_len"] = master["text"].str.split().str.len()
+MAX_LEN = 400
+master["article_len"] = (
+    master["text"]
+    .str.split()
+    .str.len()
+    .clip(upper=MAX_LEN)
+)
+
 master["title_len"] = master["title"].str.split().str.len()
 
 # simple political keyword flag (quick bias check)
