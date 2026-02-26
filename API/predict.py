@@ -5,6 +5,9 @@ from fastapi import FastAPI
 import pytorch_lightning as pl
 from pydantic import BaseModel
 from newspaper import Article
+import re
+import pandas as pd
+import unicodedata
 
 # load the vocabulary
 with open("API/model/gru_vocab.json", "r") as f:
@@ -43,6 +46,15 @@ def pad_sequence(seq, max_len=400):
         return seq + [vocab.get("<PAD>", 0)] * (max_len - len(seq))
     return seq[:max_len]
 
+# text cleanup to fix odd characters/spacing without changing tone
+def clean(text: str) -> str:
+    text = "" if pd.isna(text) else str(text)
+    text = unicodedata.normalize("NFKC", text)
+    text = text.replace("\u00a0", " ").replace("\ufeff", "").replace("\u200b", "")
+    text = "".join(ch for ch in text if unicodedata.category(ch)[0] != "C" or ch in ("\t", "\n", "\r"))
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
+
 # define the request form for the API
 class PredictUrlRequest(BaseModel):
     url: str
@@ -54,14 +66,14 @@ def predict_url(req: PredictUrlRequest):
     article = Article(req.url, language="en")
     article.download()
     article.parse()
-    text = article.text or ""
+    text = clean(article.text) or ""
 
     # limit the text to the first 1200 characters to avoid excessively long inputs
     words = text.lower().split()
     words = words[:400]
     text = " ".join(words)
 
-    # preprocess the text and convert to tensor
+    # more text preprocessing (convert to sequence + add padding) then convert to tensor
     seq = text_to_sequence(text)
     padded_seq = pad_sequence(seq, max_len=400)
     input_tensor = torch.tensor([padded_seq], dtype=torch.long)
