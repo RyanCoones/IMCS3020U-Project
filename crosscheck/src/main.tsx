@@ -3,7 +3,6 @@ import App from "./App.tsx"
 import { BrowserRouter } from "react-router-dom"
 import "./App.css"
 import { AuthProvider } from "react-oidc-context"
-import { StrictMode } from "react"
 
 const cognitoAuthConfig = {
   authority: "https://cognito-idp.us-east-2.amazonaws.com/us-east-2_r9vC108ea",
@@ -16,12 +15,9 @@ const cognitoAuthConfig = {
 const root = createRoot(document.getElementById("root")!);
 
 root.render(
-  <StrictMode>
     <AuthProvider {...cognitoAuthConfig}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </AuthProvider>
-  </StrictMode>
-  
+    </AuthProvider>  
 )

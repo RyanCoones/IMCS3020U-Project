@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { PanelRightClose, PanelRightOpen } from "lucide-react"
+import { PanelRightClose, PanelRightOpen, ShieldCheck, Info, Clock4 } from "lucide-react"
+
 
 interface SidebarProps {
     isCollapsed: boolean;
@@ -35,37 +36,51 @@ const Sidebar: React.FC<SidebarProps> = ({isCollapsed, username, toggleSidebar, 
                 </div>
                 {/* BUTTONS FOR NAVIGATION GO HERE WITH THIS FORMAT */}
                 <button
-                    title=""
-                    onClick={() => navigate("/path")}
+                    title="Checker"
+                    onClick={() => navigate("/checker")}
                     className={`flex items-center bg-ccgreen-800 text-white rounded-md cursor-pointer hover:bg-ccgreen-900 transition-all duration-200 ${isCollapsed ? "w-12 h-12 justify-center px-0" : "w-full h-12 px-3 py-2 justify-start"}`}
                 >
-                    {/* LUCIDE REACT SYMBOL SIZE 24: <Symbol size={24}/> */}
-                    {!isCollapsed && <span className="ml-4">BUTTON TEXT</span>}
+                    <ShieldCheck size={24} />
+                    {!isCollapsed && <span className="ml-4">Checker</span>}
+                </button>
+                <button
+                    title="Recently Checked"
+                    onClick={() => navigate("/recents")}
+                    className={`flex items-center bg-ccgreen-800 text-white rounded-md cursor-pointer hover:bg-ccgreen-900 transition-all duration-200 ${isCollapsed ? "w-12 h-12 justify-center px-0" : "w-full h-12 px-3 py-2 justify-start"}`}
+                >
+                    <Clock4 size={24} />
+                    {!isCollapsed && <span className="ml-4">Recently Checked</span>}
+                </button>
+                <button
+                    title="About"
+                    onClick={() => navigate("/about")}
+                    className={`flex items-center bg-ccgreen-800 text-white rounded-md cursor-pointer hover:bg-ccgreen-900 transition-all duration-200 ${isCollapsed ? "w-12 h-12 justify-center px-0" : "w-full h-12 px-3 py-2 justify-start"}`}
+                >
+                    <Info size={24} />
+                    {!isCollapsed && <span className="ml-4">About</span>}
                 </button>
             </div>
                 
 
-
-
-                <div className="py-4 px-2">
-                    <div className="w-full h-px bg-ccgreen-800 mb-2"></div>
-                    <button
-                        onClick={() => navigate("/")}
-                        className={`flex items-center bg-ccgreen-800 text-white rounded-md cursor-pointer hover:bg-ccgreen-900 transition-all duration-200 ${isCollapsed ? "w-full h-14 justify-center px-0" : "w-full h-14 px-3 py-2 justify-start"}`}
-                        style={{paddingLeft: isCollapsed ? "0rem" : "0.5rem"}}
-                    >
-                        {/* USER ICON */}
-                        <div className="flex justify-center items-center rounded-full overflow-hidden bg-linear-to-b from-ccblue-700 to-ccblue-900 text-white font-bold select-none w-10 h-10">{username ? username[0].toUpperCase() : "U"}</div>
-                        {!isCollapsed && <span className="pl-2">{username}</span>}
-                    </button>
-                    <button
-                        onClick={onLogout}
-                        className="w-full bg-ccblue-800 hover:bg-ccblue-900 text-white font-bold py-2 px-4 mt-2 rounded"
-                        style={{fontSize: isCollapsed ? "0.75rem" : "1rem", padding: isCollapsed ? "0.25rem" : "0.5rem 1rem"}}
-                    >
-                        Sign out
-                    </button>
-                </div>
+            <div className="py-4 px-2">
+                <div className="w-full h-px bg-ccgreen-800 mb-2"></div>
+                <button
+                    onClick={() => navigate("/profile")}
+                    className={`flex items-center bg-ccgreen-800 text-white rounded-md cursor-pointer hover:bg-ccgreen-900 transition-all duration-200 ${isCollapsed ? "w-full h-14 justify-center px-0" : "w-full h-14 px-3 py-2 justify-start"}`}
+                    style={{paddingLeft: isCollapsed ? "0rem" : "0.5rem"}}
+                >
+                    {/* USER ICON */}
+                    <div className="flex justify-center items-center rounded-full overflow-hidden bg-linear-to-b from-ccblue-700 to-ccblue-900 text-white font-bold select-none w-10 h-10">{username ? username[0].toUpperCase() : "U"}</div>
+                    {!isCollapsed && <span className="pl-2">{username}</span>}
+                </button>
+                <button
+                    onClick={onLogout}
+                    className="w-full bg-ccblue-800 hover:bg-ccblue-900 text-white font-bold py-2 px-4 mt-2 rounded"
+                    style={{fontSize: isCollapsed ? "0.75rem" : "1rem", padding: isCollapsed ? "0.25rem" : "0.5rem 1rem"}}
+                >
+                    Sign out
+                </button>
+            </div>
 
         </div>
     );

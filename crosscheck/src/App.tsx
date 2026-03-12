@@ -1,9 +1,12 @@
 import { useAuth } from "react-oidc-context"
 import { useState } from "react"
 import { Route, Routes } from "react-router-dom"
-import Home from "./components/Home.tsx"
+import About from "./components/About.tsx"
+import Profile from "./components/Profile.tsx"
 import Sidebar from "./components/Sidebar.tsx"
 import crosscheckLogo from "./assets/crosscheck_logo.png"
+import Checker from "./components/Checker.tsx"
+import Recents from "./components/Recents.tsx"
 
 function App() {
   const auth = useAuth();
@@ -28,13 +31,13 @@ function App() {
   };
 
   // loading and error screens
-  if (auth.isLoading) {return <div className="flex min-h-screen items-center justify-center bg-linear-to-r from-cclightbg to-ccgreen-400 text-ccgreen-900">Loading...</div>;}
-  if (auth.error) {return <div className="flex min-h-screen items-center justify-center bg-linear-to-r from-cclightbg to-ccgreen-400 text-ccgreen-900">Encountering error... {auth.error.message}</div>;}
+  if (auth.isLoading) {return <div className="flex min-h-screen items-center justify-center bg-linear-to-l from-ccgreen-300 to-ccgreen-400 text-ccgreen-900">Loading...</div>;}
+  if (auth.error) {return <div className="flex min-h-screen items-center justify-center bg-linear-to-l from-ccgreen-300 to-ccgreen-400 text-ccgreen-900">Encountering error... {auth.error.message}</div>;}
 
   // if the user is authenticated, render the apps main content
   if (auth.isAuthenticated) {
     return (
-      <div className="flex min-h-screen bg-linear-to-r from-cclightbg to-ccgreen-400 text-ccgreen-50">
+      <div className="flex min-h-screen  bg-linear-to-l from-ccgreen-300 to-ccgreen-400 text-ccgreen-50">
         {/*Sidebar*/}
         <Sidebar 
           isCollapsed={!sidebarOpen}
@@ -48,7 +51,11 @@ function App() {
           className="transition-all duration-300 p-6 mt-4"
           style={{marginLeft: sidebarOpen ? SIDEBAR_OPEN_WIDTH : SIDEBAR_COLLAPSED_WIDTH}}>
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path = "/" element={<Checker />}/>
+            <Route path = "/checker" element={<Checker />}/>
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/recents" element={<Recents />} />
           </Routes>
         </main>
       </div>
@@ -57,7 +64,7 @@ function App() {
 
   // render this if the user has not been authenticated
   return (
-    <div className="flex min-h-screen items-center justify-center bg-linear-to-r from-ccgreen-200 to-ccgreen-400 text-white">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-l from-ccgreen-300 to-ccgreen-400 text-white">
       <div className="relative p-8 w-full max-w-md text-left space-y-6 rounded-md bg-ccgreen-900">
         <h1 className="text-2xl font-semibold">Welcome to CrossCheck</h1>
         <p>Log in or sign up to continue.</p>
@@ -68,7 +75,7 @@ function App() {
         />
         <button
           className="w-full py-2 px-4 rounded bg-ccblue-600 hover:bg-ccblue-500"
-          onClick={() => auth.signinRedirect({ extraQueryParams: { prompt: "login" } })}
+          onClick={() => auth.signinRedirect()}
         >
           Sign in / Sign up
         </button>
