@@ -1,0 +1,15 @@
+# AI generated with Claude — added sqlalchemy, psycopg2-binary, python-jose, httpx, python-dotenv for DB + auth
+fastapi
+uvicorn[standard]
+torch
+pytorch-lightning
+newspaper4k
+pandas
+numpy
+sqlalchemy
+psycopg2-binary
+python-jose[cryptography]
+python-dotenv
+httpx
+trafilatura
+boto3

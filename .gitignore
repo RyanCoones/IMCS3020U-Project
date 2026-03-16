@@ -28,3 +28,6 @@ dist-ssr
 
 # large files
 ML/artifacts/error_analysis/*.csv
+
+#secrets
+*.env
