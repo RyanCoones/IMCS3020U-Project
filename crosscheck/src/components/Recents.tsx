@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import { API_BASE } from "../api";
-import { ShieldCheck, Trash2, Sparkles, ChevronUp, ChevronDown, ListChecks } from "lucide-react";
+import { ShieldCheck, Trash2, Sparkles, ChevronUp, ListChecks } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 type FactCheckClaim = {
