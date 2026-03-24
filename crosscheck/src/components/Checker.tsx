@@ -1,13 +1,58 @@
 // UI reworked with Claude AI — blue button, URL icon input, structured result state, color-coded verdict card + progress bar, Bedrock AI explanation
 import { useState, type ChangeEvent } from "react";
 import { useAuth } from "react-oidc-context";
-import { Link2, ShieldCheck, Sparkles, ChevronDown, ChevronUp } from "lucide-react";
+import { API_BASE } from "../api";
+import { Link2, ShieldCheck, Sparkles, ChevronDown, ChevronUp, ListChecks } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+
+type FactCheckClaim = {
+  claim: string;
+  verdict: "Supported" | "Contradicted" | "Unverified";
+  summary: string;
+  sources: { title: string; url: string; description: string }[];
+};
 
 type Result =
   | "idle"
   | "loading"
-  | { label: string; pct: number; explanation?: string }
+  | { label: string; pct: number; explanation?: string; factCheck?: FactCheckClaim[] }
   | { error: string };
+
+const verdictStyles: Record<string, { bg: string; border: string; text: string }> = {
+  Supported:    { bg: "bg-emerald-500/10", border: "border-emerald-500/40", text: "text-emerald-300" },
+  Contradicted: { bg: "bg-red-500/10",     border: "border-red-500/40",     text: "text-red-300" },
+  Unverified:   { bg: "bg-neutral-700/40", border: "border-neutral-600",    text: "text-neutral-400" },
+};
+
+function FactCheckClaimCard({ item }: { item: FactCheckClaim }) {
+  const s = verdictStyles[item.verdict] ?? verdictStyles.Unverified;
+  return (
+    <div className={`rounded-lg border ${s.border} ${s.bg} p-3 space-y-1.5`}>
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-xs text-neutral-300 font-medium leading-snug flex-1">{item.claim}</p>
+        <span className={`text-xs font-bold px-2 py-0.5 rounded-full shrink-0 ${s.text} border ${s.border}`}>
+          {item.verdict}
+        </span>
+      </div>
+      <p className="text-xs text-neutral-400 leading-relaxed">{item.summary}</p>
+      {item.sources.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 pt-0.5">
+          {item.sources.map((src, j) => (
+            <a
+              key={j}
+              href={src.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-blue-400 hover:text-blue-300 underline truncate max-w-55"
+            >
+              {src.title}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Checker() {
     const auth = useAuth();
@@ -16,6 +61,7 @@ export default function Checker() {
     const [url, setUrl] = useState("");
     const [result, setResult] = useState<Result>("idle");
     const [explanationOpen, setExplanationOpen] = useState(false);
+    const [factCheckOpen, setFactCheckOpen] = useState(false);
 
     const isValidUrl = (val: string) => {
       try { return ["http:", "https:"].includes(new URL(val).protocol); }
@@ -30,10 +76,11 @@ export default function Checker() {
       }
       setResult("loading");
       setExplanationOpen(false);
+      setFactCheckOpen(false);
 
       try {
         const idToken = auth.user?.id_token;
-        const response = await fetch("/api/predict_url", {
+        const response = await fetch(`${API_BASE}/predict_url`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -51,8 +98,12 @@ export default function Checker() {
         const probFake = data.probability !== undefined ? 1 - data.probability : data.prob_fake;
         const pct = Math.round((probFake || 0) * 100);
         const explanation = data.explanation ?? undefined;
-        setResult({ label: data.label?.toUpperCase?.() || "N/A", pct, explanation });
-        if (explanation) setExplanationOpen(true);
+        const factCheck: FactCheckClaim[] | undefined = Array.isArray(data.fact_check) && data.fact_check.length > 0
+          ? data.fact_check
+          : undefined;
+        setResult({ label: data.label?.toUpperCase?.() || "N/A", pct, explanation, factCheck });
+        if (explanation) setExplanationOpen(localStorage.getItem("cc_auto_analysis")   !== "false");
+        if (factCheck)   setFactCheckOpen(localStorage.getItem("cc_auto_factcheck") !== "false");
       } catch (error) {
         setResult({ error: `Request failed: ${error}` });
       }
@@ -89,12 +140,12 @@ export default function Checker() {
       const isFake = pct > 60;
 
       const colors = isReal
-        ? { border: "border-emerald-400/60", bg: "bg-emerald-400/10", label: "text-emerald-300", icon: "text-emerald-400", verdict: "Likely Real", bar: "#34d399" }
+        ? { border: "border-emerald-400/60", bg: "bg-emerald-400/10", label: "text-emerald-300", icon: "text-emerald-400", verdict: "No Concerns Detected", bar: "#34d399" }
         : isFake
-        ? { border: "border-red-500/60", bg: "bg-red-500/10", label: "text-red-300", icon: "text-red-400", verdict: "Likely Fake", bar: "#ef4444" }
-        : { border: "border-orange-400/60", bg: "bg-orange-400/10", label: "text-orange-300", icon: "text-orange-400", verdict: "Uncertain", bar: "#fb923c" };
+        ? { border: "border-red-500/60", bg: "bg-red-500/10", label: "text-red-300", icon: "text-red-400", verdict: "Credibility Concerns", bar: "#ef4444" }
+        : { border: "border-orange-400/60", bg: "bg-orange-400/10", label: "text-orange-300", icon: "text-orange-400", verdict: "Review Recommended", bar: "#fb923c" };
 
-      const { explanation } = result;
+      const { explanation, factCheck } = result;
 
       return (
         <div className={`rounded-lg border border-l-4 ${colors.border} ${colors.bg} p-4 space-y-3`}>
@@ -105,7 +156,7 @@ export default function Checker() {
           </div>
           <div>
             <div className="flex justify-between text-xs text-neutral-500 mb-1.5">
-              <span>Fake probability</span>
+              <span>Concern level</span>
               <span className={`font-semibold ${colors.label}`}>{pct}%</span>
             </div>
             <div className="h-1.5 rounded-full bg-neutral-950 overflow-hidden">
@@ -115,6 +166,7 @@ export default function Checker() {
               ></div>
             </div>
           </div>
+
           {explanation && (
             <div>
               <button
@@ -127,7 +179,36 @@ export default function Checker() {
               </button>
               {explanationOpen && (
                 <div className="mt-2 bg-neutral-900/70 rounded-lg border border-neutral-700 p-3">
-                  <p className="text-xs text-neutral-300 whitespace-pre-wrap leading-relaxed">{explanation}</p>
+                  <div className="text-xs text-neutral-300 leading-relaxed prose-explanation">
+                    <ReactMarkdown components={{
+                      p:      ({children}) => <p className="mb-2 last:mb-0">{children}</p>,
+                      ul:     ({children}) => <ul className="list-disc pl-4 space-y-1 mb-2">{children}</ul>,
+                      ol:     ({children}) => <ol className="list-decimal pl-4 space-y-1 mb-2">{children}</ol>,
+                      li:     ({children}) => <li>{children}</li>,
+                      strong: ({children}) => <strong className="font-semibold text-neutral-200">{children}</strong>,
+                      em:     ({children}) => <em className="italic">{children}</em>,
+                    }}>{explanation}</ReactMarkdown>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {factCheck && factCheck.length > 0 && (
+            <div>
+              <button
+                onClick={() => setFactCheckOpen((o) => !o)}
+                className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-neutral-200 transition-colors cursor-pointer"
+              >
+                <ListChecks size={12} className="text-purple-400" />
+                Fact Check
+                {factCheckOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+              </button>
+              {factCheckOpen && (
+                <div className="mt-2 space-y-2">
+                  {factCheck.map((item, i) => (
+                    <FactCheckClaimCard key={i} item={item} />
+                  ))}
                 </div>
               )}
             </div>

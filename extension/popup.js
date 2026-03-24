@@ -137,25 +137,25 @@ function renderResult(pct, explanation) {
     card = `
       <div class="rounded-lg border border-l-4 border-emerald-400/60 bg-emerald-400/10 p-3">
         <div class="flex items-center gap-2 mb-1">${icons.check}
-          <span class="font-semibold text-emerald-300 text-sm uppercase tracking-wide">Likely Real</span>
+          <span class="font-semibold text-emerald-300 text-sm uppercase tracking-wide">No Concerns Detected</span>
         </div>
-        <div class="text-xs text-neutral-400">Fake probability: <span class="font-medium text-neutral-200">${pct}%</span></div>
+        <div class="text-xs text-neutral-400">Concern level: <span class="font-medium text-neutral-200">${pct}%</span></div>
       </div>`;
   } else if (pct <= 60) {
     card = `
       <div class="rounded-lg border border-l-4 border-orange-400/60 bg-orange-400/10 p-3">
         <div class="flex items-center gap-2 mb-1">${icons.warning}
-          <span class="font-semibold text-orange-300 text-sm uppercase tracking-wide">Uncertain</span>
+          <span class="font-semibold text-orange-300 text-sm uppercase tracking-wide">Review Recommended</span>
         </div>
-        <div class="text-xs text-neutral-400">Fake probability: <span class="font-medium text-neutral-200">${pct}%</span></div>
+        <div class="text-xs text-neutral-400">Concern level: <span class="font-medium text-neutral-200">${pct}%</span></div>
       </div>`;
   } else {
     card = `
       <div class="rounded-lg border border-l-4 border-red-500/60 bg-red-500/10 p-3">
         <div class="flex items-center gap-2 mb-1">${icons.xmark}
-          <span class="font-semibold text-red-300 text-sm uppercase tracking-wide">Likely Fake</span>
+          <span class="font-semibold text-red-300 text-sm uppercase tracking-wide">Credibility Concerns</span>
         </div>
-        <div class="text-xs text-neutral-400">Fake probability: <span class="font-medium text-neutral-200">${pct}%</span></div>
+        <div class="text-xs text-neutral-400">Concern level: <span class="font-medium text-neutral-200">${pct}%</span></div>
       </div>`;
   }
 

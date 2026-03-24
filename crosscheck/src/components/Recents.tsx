@@ -1,7 +1,16 @@
 // UI reworked with Claude AI — richer list items with title/url/badge, fetches real history from /api/history, per-item delete, inline AI explanation
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
-import { ShieldCheck, Trash2, Sparkles, ChevronUp } from "lucide-react";
+import { API_BASE } from "../api";
+import { ShieldCheck, Trash2, Sparkles, ChevronUp, ChevronDown, ListChecks } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+
+type FactCheckClaim = {
+  claim: string;
+  verdict: "Supported" | "Contradicted" | "Unverified";
+  summary: string;
+  sources: { title: string; url: string; description: string }[];
+};
 
 type HistoryItem = {
   id: string;
@@ -10,16 +19,53 @@ type HistoryItem = {
   label: "real" | "fake";
   probability: number;
   explanation?: string | null;
+  fact_check?: FactCheckClaim[] | null;
   checked_at: string;
 };
 
 type Status = "real" | "fake" | "uncertain";
 
 const statusConfig = {
-  real:      { border: "border-emerald-400/60", badge: "bg-emerald-400/15 text-emerald-300", label: "Real" },
-  fake:      { border: "border-red-500/60",     badge: "bg-red-500/15 text-red-300",         label: "Fake" },
-  uncertain: { border: "border-orange-400/60",  badge: "bg-orange-400/15 text-orange-300",   label: "Uncertain" },
+  real:      { border: "border-emerald-400/60", badge: "bg-emerald-400/15 text-emerald-300", label: "Clear" },
+  fake:      { border: "border-red-500/60",     badge: "bg-red-500/15 text-red-300",         label: "Flagged" },
+  uncertain: { border: "border-orange-400/60",  badge: "bg-orange-400/15 text-orange-300",   label: "Review" },
 };
+
+const verdictStyles: Record<string, { bg: string; border: string; text: string }> = {
+  Supported:    { bg: "bg-emerald-500/10", border: "border-emerald-500/40", text: "text-emerald-300" },
+  Contradicted: { bg: "bg-red-500/10",     border: "border-red-500/40",     text: "text-red-300" },
+  Unverified:   { bg: "bg-neutral-700/40", border: "border-neutral-600",    text: "text-neutral-400" },
+};
+
+function FactCheckClaimCard({ item }: { item: FactCheckClaim }) {
+  const s = verdictStyles[item.verdict] ?? verdictStyles.Unverified;
+  return (
+    <div className={`rounded-lg border ${s.border} ${s.bg} p-3 space-y-1.5`}>
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-xs text-neutral-300 font-medium leading-snug flex-1">{item.claim}</p>
+        <span className={`text-xs font-bold px-2 py-0.5 rounded-full shrink-0 ${s.text} border ${s.border}`}>
+          {item.verdict}
+        </span>
+      </div>
+      <p className="text-xs text-neutral-400 leading-relaxed">{item.summary}</p>
+      {item.sources.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 pt-0.5">
+          {item.sources.map((src, j) => (
+            <a
+              key={j}
+              href={src.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-blue-400 hover:text-blue-300 underline truncate max-w-55"
+            >
+              {src.title}
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function getStatus(label: string, probability: number): Status {
   const pctFake = Math.round((1 - probability) * 100);
@@ -42,7 +88,7 @@ export default function Recents() {
       return;
     }
 
-    fetch("/api/history", {
+    fetch(`${API_BASE}/history`, {
       headers: { Authorization: `Bearer ${idToken}` },
     })
       .then((res) => {
@@ -58,7 +104,7 @@ export default function Recents() {
     const idToken = auth.user?.id_token;
     if (!idToken) return;
     try {
-      const res = await fetch(`/api/history/${id}`, {
+      const res = await fetch(`${API_BASE}/history/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${idToken}` },
       });
@@ -101,7 +147,7 @@ export default function Recents() {
           const pctFake = Math.round((1 - item.probability) * 100);
           const displayTitle = item.title || item.url;
           const date = new Date(item.checked_at).toLocaleDateString();
-
+          const hasExpanded = !!(item.explanation || item.fact_check?.length);
           const isExpanded = expandedId === item.id;
 
           return (
@@ -113,11 +159,11 @@ export default function Recents() {
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-sm font-medium text-neutral-200 leading-snug line-clamp-2 flex-1">{displayTitle}</p>
                   <div className="flex items-center gap-1.5 shrink-0">
-                    {item.explanation && (
+                    {hasExpanded && (
                       <button
                         onClick={() => setExpandedId(isExpanded ? null : item.id)}
                         className="p-1.5 rounded-lg text-blue-400 hover:bg-blue-500/10 transition-colors cursor-pointer"
-                        title="AI Analysis"
+                        title="AI Analysis & Fact Check"
                       >
                         {isExpanded ? <ChevronUp size={14} /> : <Sparkles size={14} />}
                       </button>
@@ -134,22 +180,47 @@ export default function Recents() {
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-xs text-neutral-600 truncate">{item.url} · {date}</p>
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-xs text-neutral-400">{pctFake}% fake</span>
+                    <span className="text-xs text-neutral-400">{pctFake}% concern</span>
                     <span className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${cfg.badge}`}>
                       {cfg.label}
                     </span>
                   </div>
                 </div>
               </div>
-              {isExpanded && item.explanation && (
-                <div className="px-3 pb-3">
-                  <div className="bg-neutral-900/70 rounded-lg border border-neutral-700 p-3">
-                    <div className="flex items-center gap-1.5 text-xs text-blue-400 mb-2 font-medium">
-                      <Sparkles size={11} />
-                      AI Analysis
+
+              {isExpanded && hasExpanded && (
+                <div className="px-3 pb-3 space-y-2">
+                  {item.explanation && (
+                    <div className="bg-neutral-900/70 rounded-lg border border-neutral-700 p-3">
+                      <div className="flex items-center gap-1.5 text-xs text-blue-400 mb-2 font-medium">
+                        <Sparkles size={11} />
+                        AI Analysis
+                      </div>
+                      <div className="text-xs text-neutral-300 leading-relaxed">
+                        <ReactMarkdown components={{
+                          p:      ({children}) => <p className="mb-2 last:mb-0">{children}</p>,
+                          ul:     ({children}) => <ul className="list-disc pl-4 space-y-1 mb-2">{children}</ul>,
+                          ol:     ({children}) => <ol className="list-decimal pl-4 space-y-1 mb-2">{children}</ol>,
+                          li:     ({children}) => <li>{children}</li>,
+                          strong: ({children}) => <strong className="font-semibold text-neutral-200">{children}</strong>,
+                          em:     ({children}) => <em className="italic">{children}</em>,
+                        }}>{item.explanation}</ReactMarkdown>
+                      </div>
                     </div>
-                    <p className="text-xs text-neutral-300 whitespace-pre-wrap leading-relaxed">{item.explanation}</p>
-                  </div>
+                  )}
+                  {item.fact_check && item.fact_check.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-1.5 text-xs text-purple-400 mb-2 font-medium">
+                        <ListChecks size={11} />
+                        Fact Check
+                      </div>
+                      <div className="space-y-1.5">
+                        {item.fact_check.map((fc, i) => (
+                          <FactCheckClaimCard key={i} item={fc} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </li>

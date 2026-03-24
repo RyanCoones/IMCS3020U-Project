@@ -28,4 +28,5 @@ class Check(Base):
     label       = Column(String, nullable=False)    # "real" | "fake"
     probability = Column(Float, nullable=False)     # raw model output (probability of being real)
     explanation = Column(Text, nullable=True)       # AI-generated explanation from AWS Bedrock
+    fact_check  = Column(Text, nullable=True)       # JSON: list[{claim, verdict, summary, sources}]
     checked_at  = Column(DateTime(timezone=True), server_default=func.now())

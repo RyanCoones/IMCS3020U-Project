@@ -11,6 +11,7 @@ load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 import json
 import re
 import unicodedata
+from concurrent.futures import ThreadPoolExecutor
 from contextlib import asynccontextmanager
 from typing import Optional
 
@@ -21,9 +22,11 @@ import torch
 import torch.nn as nn
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+import httpx
 import trafilatura
 from newspaper import Article
 from pydantic import BaseModel
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from auth import REGION, get_current_user, get_current_user_optional
@@ -58,60 +61,46 @@ gru_model.load_state_dict(torch.load("API/model/gru_classifier.pt"))
 gru_model.eval()
 
 # ---------------------------------------------------------------------------
-# FastAPI app with lifespan (creates DB tables on startup)
+# FastAPI app with lifespan (creates DB tables on startup + runs migrations)
 # ---------------------------------------------------------------------------
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    # Idempotent migration: add fact_check column if it doesn't exist yet
+    with engine.connect() as conn:
+        conn.execute(text(
+            "ALTER TABLE checks ADD COLUMN IF NOT EXISTS fact_check TEXT"
+        ))
+        conn.commit()
     yield
 
 app = FastAPI(lifespan=lifespan)
 
+_extra_origins = [o.strip() for o in os.environ.get("EXTRA_CORS_ORIGINS", "").split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "chrome-extension://*"],
+    allow_origins=["http://localhost:5173", "chrome-extension://*"] + _extra_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # ---------------------------------------------------------------------------
-# Bedrock explanation helper
+# Bedrock helpers
 # ---------------------------------------------------------------------------
 
-def generate_explanation(text: str, title: str | None, prob: float) -> str | None:
-    """Call Claude via AWS Bedrock API key to explain the model's verdict. Returns None on any failure."""
-    api_key = os.environ.get("AWS_BEARER_TOKEN_BEDROCK", "")
-    if not api_key:
-        print("[Bedrock] AWS_BEARER_TOKEN_BEDROCK not set, skipping explanation", flush=True)
-        return None
-    import httpx
-    if not text or len(text.split()) < 20:
-        print(f"[Bedrock] skipping — text too short ({len(text.split()) if text else 0} words)", flush=True)
-        return None
-    print(f"[Bedrock] calling model, key prefix={api_key[:12]}..., text_words={len(text.split())}", flush=True)
+def _bedrock_call(prompt: str, api_key: str, max_tokens: int = 512) -> str | None:
+    """POST a prompt to Claude via AWS Bedrock. Returns the text content or None on failure."""
+    model_id = os.environ.get("BEDROCK_MODEL", "us.anthropic.claude-sonnet-4-6")
+    url = f"https://bedrock-runtime.{REGION}.amazonaws.com/model/{model_id}/invoke"
     try:
-        pct_fake = round((1 - prob) * 100)
-        prompt = (
-            f"You are a news credibility analyst. A machine learning model scored this article "
-            f"{pct_fake}% likely to be fake news.\n\n"
-            f"Article title: {title or 'Unknown'}\n"
-            f"Article text (first 400 words):\n{text}\n\n"
-            "In 3–4 concise bullet points, explain what features may have influenced this score. Cover:\n"
-            "• Tone and emotional language\n"
-            "• Bias indicators or loaded phrasing\n"
-            "• Specific factual claims that seem unverifiable or exaggerated\n"
-            "• Overall credibility assessment\n\n"
-            "Be concise and objective. Do not repeat the score. Do not give any form of disclaimers about accuracy or reliability."
-        )
-        url = f"https://bedrock-runtime.{REGION}.amazonaws.com/model/us.anthropic.claude-3-5-haiku-20241022-v1:0/invoke"
         response = httpx.post(
             url,
             headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
             json={
                 "anthropic_version": "bedrock-2023-05-31",
-                "max_tokens": 512,
+                "max_tokens": max_tokens,
                 "messages": [{"role": "user", "content": prompt}],
             },
             timeout=30,
@@ -123,6 +112,65 @@ def generate_explanation(text: str, title: str | None, prob: float) -> str | Non
         return None
     except Exception as e:
         print(f"[Bedrock] error: {e}", flush=True)
+        return None
+
+
+def generate_gru_analysis(text: str, title: str | None, prob: float = 0.0) -> str | None:
+    """Call Claude to describe writing/stylistic credibility signals in the article.
+    Does not mention the model, the score, or any factual claims."""
+    api_key = os.environ.get("AWS_BEARER_TOKEN_BEDROCK", "")
+    if not api_key:
+        print("[Bedrock] AWS_BEARER_TOKEN_BEDROCK not set, skipping analysis", flush=True)
+        return None
+    if not text or len(text.split()) < 20:
+        print(f"[Bedrock] skipping — text too short ({len(text.split()) if text else 0} words)", flush=True)
+        return None
+    print(f"[Bedrock] generating GRU analysis, text_words={len(text.split())}", flush=True)
+    prompt = (
+        f"You are a writing-style analyst reviewing an article for credibility signals.\n\n"
+        f"Article title: {title or 'Unknown'}\n"
+        f"Article text (first 400 words):\n{text}\n\n"
+        "In 3-4 concise bullet points, describe the writing and stylistic features "
+        "that may raise credibility concerns. Focus exclusively on:\n"
+        "• Tone and emotional language (e.g. alarmist, sensationalist, neutral)\n"
+        "• Bias indicators and loaded or partisan phrasing\n"
+        "• Structural patterns (e.g. vague attribution, lack of named sources, excessive hedging)\n"
+        "• Writing style (e.g. clickbait headline structure, urgency cues, unusual punctuation)\n\n"
+        "CRITICAL RULES:\n"
+        "- Do NOT mention any model, score, or percentage.\n"
+        "- Do NOT make any factual claims about the article's subject matter.\n"
+        "- Do NOT verify or comment on whether any claims in the article are true or false.\n"
+        "- Do NOT mention specific people, places, events, or dates from the article.\n"
+        "- Do NOT give disclaimers or caveats about your analysis."
+    )
+    return _bedrock_call(prompt, api_key, max_tokens=512)
+
+
+def invoke_fact_check_lambda(text: str, title: str | None) -> list | None:
+    """Invoke the fact-check Lambda via its Function URL. Returns a list of claim objects or None on any failure."""
+    url = os.environ.get("LAMBDA_FUNCTION_URL", "")
+    secret = os.environ.get("LAMBDA_SECRET", "")
+    if not url:
+        print("[Lambda] LAMBDA_FUNCTION_URL not set, skipping fact check", flush=True)
+        return None
+    print(f"[Lambda] invoking function URL", flush=True)
+    try:
+        response = httpx.post(
+            url,
+            headers={"X-Secret-Token": secret, "Content-Type": "application/json"},
+            json={"text": text, "title": title},
+            timeout=60,
+        )
+        response.raise_for_status()
+        result = response.json()
+        fact_check = result.get("fact_check")
+        if fact_check:
+            print(f"[Lambda] got {len(fact_check)} claims", flush=True)
+        else:
+            print(f"[Lambda] no fact_check in response: {result.get('error')}", flush=True)
+        return fact_check
+    except Exception as e:
+        print(f"[Lambda] invocation failed: {e}", flush=True)
         return None
 
 
@@ -216,7 +264,15 @@ def predict_url(
         prob = torch.sigmoid(logits).item()
 
     label = "real" if prob >= 0.5 else "fake"
-    explanation = generate_explanation(text, title, prob)
+
+    # run GRU analysis and fact-check Lambda in parallel
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        fut_analysis  = pool.submit(generate_gru_analysis, text, title, prob)
+        fut_factcheck = pool.submit(invoke_fact_check_lambda, text, title)
+        explanation      = fut_analysis.result()
+        fact_check_list  = fut_factcheck.result()
+
+    fact_check_json = json.dumps(fact_check_list) if fact_check_list else None
 
     # if the request came from a logged-in user, persist the check
     if claims is not None:
@@ -228,6 +284,7 @@ def predict_url(
             label=label,
             probability=prob,
             explanation=explanation,
+            fact_check=fact_check_json,
         ))
         db.commit()
 
@@ -238,6 +295,7 @@ def predict_url(
         "probability": prob,
         "label": label,
         "explanation": explanation,
+        "fact_check": fact_check_list,
     }
 
 
@@ -330,6 +388,7 @@ def get_history(
             "label": r.label,
             "probability": r.probability,
             "explanation": r.explanation,
+            "fact_check": json.loads(r.fact_check) if r.fact_check else None,
             "checked_at": r.checked_at.isoformat(),
         }
         for r in rows
