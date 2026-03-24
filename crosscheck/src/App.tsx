@@ -16,7 +16,7 @@ function App() {
   const navigate = useNavigate();
   const location = useLocation();
   const clientId = "47v1mbhis0gtrl7df2rm8n06nm";
-  const logoutUri = "http://localhost:5173/";
+  const logoutUri = window.location.origin + "/";
   const cognitoDomain = "https://us-east-2r9vc108ea.auth.us-east-2.amazoncognito.com";
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
