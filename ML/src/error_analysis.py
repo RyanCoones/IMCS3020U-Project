@@ -41,7 +41,7 @@ if "row_id" not in df.columns:
 
 # normalize label → strings
 if df["label"].dtype != object:
-    df["true_label"] = df["label"].map({0: "real", 1: "fake"})
+    df["true_label"] = df["label"].map({0: "fake", 1: "real"})  # WELFake: 0=fake, 1=real
 else:
     df["true_label"] = df["label"].astype(str).str.lower()
 

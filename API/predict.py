@@ -128,7 +128,8 @@ def generate_gru_analysis(text: str, title: str | None, prob: float = 0.0) -> st
         return None
     print(f"[Bedrock] generating GRU analysis, text_words={len(text.split())}", flush=True)
 
-    if prob < 0.25:
+    concern = 1.0 - prob  # prob is p(real); concern is p(fake)
+    if concern < 0.25:
         direction = (
             "This article has been assessed as credible. "
             "In 3-4 concise bullet points, highlight the writing and stylistic features "
@@ -138,7 +139,7 @@ def generate_gru_analysis(text: str, title: str | None, prob: float = 0.0) -> st
             "\n• Objective, balanced framing"
             "\n• Professional writing style"
         )
-    elif prob <= 0.60:
+    elif concern <= 0.60:
         direction = (
             "This article has shown mixed credibility signals. "
             "In 3-4 concise bullet points, describe the writing and stylistic features "
