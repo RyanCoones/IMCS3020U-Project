@@ -38,7 +38,7 @@ from models import Check, User
 # ---------------------------------------------------------------------------
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(_HERE, "model", "gru_vocab5000.json"), "r") as f:
+with open(os.path.join(_HERE, "model", "gru_vocab.json"), "r") as f:
     vocab = json.load(f)
 
 
@@ -58,7 +58,7 @@ class GRUModel(pl.LightningModule):
 
 
 gru_model = GRUModel(vocab_size=len(vocab), embedding_dim=128, hidden_dim=256)
-gru_model.load_state_dict(torch.load(os.path.join(_HERE, "model", "gru_classifier5000.pt"), weights_only=True))
+gru_model.load_state_dict(torch.load(os.path.join(_HERE, "model", "gru_classifier.pt"), weights_only=True))
 gru_model.eval()
 
 # ---------------------------------------------------------------------------
@@ -162,11 +162,17 @@ def generate_gru_analysis(text: str, title: str | None, prob: float = 0.0) -> st
 
     prompt = (
         f"You are a writing-style analyst reviewing an article for credibility signals.\n\n"
+        "IMPORTANT CONTEXT ABOUT THE TEXT:\n"
+        "- The text below has been automatically extracted and preprocessed: it has been lowercased and "
+        "normalised for machine analysis. Do NOT treat the lack of capitalisation as a credibility signal.\n"
+        "- The text is limited to the first 400 words of the article and may end mid-sentence. "
+        "Do NOT treat truncation as a credibility signal.\n\n"
         f"Article title: {title or 'Unknown'}\n"
         f"Article text (first 400 words):\n{text}\n\n"
         f"{direction}\n\n"
         "CRITICAL RULES:\n"
         "- Do NOT mention any model, score, or percentage.\n"
+        "- Do NOT comment on capitalisation, lowercasing, or truncation — these are preprocessing artefacts.\n"
         "- Do NOT make any factual claims about the article's subject matter.\n"
         "- Do NOT verify or comment on whether any claims in the article are true or false.\n"
         "- Do NOT mention specific people, places, events, or dates from the article.\n"

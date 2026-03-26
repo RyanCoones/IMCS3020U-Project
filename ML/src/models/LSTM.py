@@ -152,21 +152,21 @@ with torch.no_grad():
 # concatenate all predictions and true labels
 y_pred = np.concatenate(all_preds)
 y_true = np.concatenate(all_true)
-prob_fake = np.concatenate(all_probs)
+prob_fake = 1.0 - np.concatenate(all_probs)  # sigmoid = P(real); invert to get P(fake)
 test_row_ids = np.concatenate(all_indices)
 test_accuracy = float((y_pred == y_true).mean())
 
 test_preds = pd.DataFrame({
     "row_id": test_row_ids,
-    "true_label": np.where(y_true == 1, "fake", "real"),
-    "pred_label": np.where(y_pred == 1, "fake", "real"),
+    "true_label": np.where(y_true == 1, "real", "fake"),  # WELFake: 1=real, 0=fake
+    "pred_label": np.where(y_pred == 1, "real", "fake"),
     "prob_fake": prob_fake,
 })
 test_preds.to_csv(preds_dir / "lstm_test_preds.csv", index=False)
 
 # print performance summary
 print(f"Test accuracy: {test_accuracy:.4f}")
-print(classification_report(y_true, y_pred, target_names=["real", "fake"]))
+print(classification_report(y_true, y_pred, target_names=["fake", "real"]))  # WELFake: 0=fake, 1=real
 print("Confusion matrix [ [TN, FP], [FN, TP] ]:")
 print(confusion_matrix(y_true, y_pred))
 
@@ -174,8 +174,8 @@ print(confusion_matrix(y_true, y_pred))
 mis_mask = y_pred != y_true
 misclassified = pd.DataFrame({
     "row_id": test_row_ids[mis_mask],
-    "true_label": np.where(y_true[mis_mask] == 1, "fake", "real"),
-    "pred_label": np.where(y_pred[mis_mask] == 1, "fake", "real"),
+    "true_label": np.where(y_true[mis_mask] == 1, "real", "fake"),  # WELFake: 1=real, 0=fake
+    "pred_label": np.where(y_pred[mis_mask] == 1, "real", "fake"),
     "prob_fake": prob_fake[mis_mask],
 })
 

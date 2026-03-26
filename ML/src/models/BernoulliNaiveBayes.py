@@ -110,13 +110,13 @@ if __name__ == "__main__":
     model.fit(X_train_texts, y_train)
     y_pred = model.predict(X_test_texts)
 
-    # probability for "fake" (assumes label 1 = fake)
+    # WELFake: 0=fake, 1=real → class 0 column = P(fake)
     probs = model.predict_prob(X_test_texts)  # shape (n, 2)
-    prob_fake = probs[:, 1].astype(float)
+    prob_fake = probs[:, 0].astype(float)
 
-    # map to evaluate_all labels
-    true_label = np.where(y_test == 1, "fake", "real")
-    pred_label = np.where(y_pred == 1, "fake", "real")
+    # WELFake: 1=real, 0=fake
+    true_label = np.where(y_test == 1, "real", "fake")
+    pred_label = np.where(y_pred == 1, "real", "fake")
 
     # write predictions file
     pred_df = pd.DataFrame({
