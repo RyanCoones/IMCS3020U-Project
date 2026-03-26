@@ -38,7 +38,7 @@ from models import Check, User
 # ---------------------------------------------------------------------------
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-with open(os.path.join(_HERE, "model", "gru_vocab.json"), "r") as f:
+with open(os.path.join(_HERE, "model", "gru_vocab5000.json"), "r") as f:
     vocab = json.load(f)
 
 
@@ -58,7 +58,7 @@ class GRUModel(pl.LightningModule):
 
 
 gru_model = GRUModel(vocab_size=len(vocab), embedding_dim=128, hidden_dim=256)
-gru_model.load_state_dict(torch.load(os.path.join(_HERE, "model", "gru_classifier.pt"), weights_only=True))
+gru_model.load_state_dict(torch.load(os.path.join(_HERE, "model", "gru_classifier5000.pt"), weights_only=True))
 gru_model.eval()
 
 # ---------------------------------------------------------------------------
