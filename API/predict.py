@@ -127,16 +127,43 @@ def generate_gru_analysis(text: str, title: str | None, prob: float = 0.0) -> st
         print(f"[Bedrock] skipping — text too short ({len(text.split()) if text else 0} words)", flush=True)
         return None
     print(f"[Bedrock] generating GRU analysis, text_words={len(text.split())}", flush=True)
+
+    if prob < 0.25:
+        direction = (
+            "This article has been assessed as credible. "
+            "In 3-4 concise bullet points, highlight the writing and stylistic features "
+            "that support its credibility. Focus on positive signals such as:"
+            "\n• Measured, neutral tone"
+            "\n• Clear attribution and sourcing language"
+            "\n• Objective, balanced framing"
+            "\n• Professional writing style"
+        )
+    elif prob <= 0.60:
+        direction = (
+            "This article has shown mixed credibility signals. "
+            "In 3-4 concise bullet points, describe the writing and stylistic features "
+            "that produce this uncertainty — both reassuring signals and concerning ones. Focus on:"
+            "\n• Tone (neutral vs. emotionally charged passages)"
+            "\n• Attribution strength (clear sourcing vs. vague references)"
+            "\n• Balanced vs. one-sided framing"
+            "\n• Writing style consistency"
+        )
+    else:
+        direction = (
+            "This article has been flagged for credibility concerns. "
+            "In 3-4 concise bullet points, explain the writing and stylistic features "
+            "that raise those concerns. Focus on:"
+            "\n• Alarmist, sensationalist, or emotionally manipulative tone"
+            "\n• Bias indicators and loaded or partisan phrasing"
+            "\n• Structural red flags (vague attribution, lack of named sources, excessive hedging)"
+            "\n• Writing style patterns (clickbait structure, urgency cues, unusual punctuation)"
+        )
+
     prompt = (
         f"You are a writing-style analyst reviewing an article for credibility signals.\n\n"
         f"Article title: {title or 'Unknown'}\n"
         f"Article text (first 400 words):\n{text}\n\n"
-        "In 3-4 concise bullet points, describe the writing and stylistic features "
-        "that may raise credibility concerns. Focus exclusively on:\n"
-        "• Tone and emotional language (e.g. alarmist, sensationalist, neutral)\n"
-        "• Bias indicators and loaded or partisan phrasing\n"
-        "• Structural patterns (e.g. vague attribution, lack of named sources, excessive hedging)\n"
-        "• Writing style (e.g. clickbait headline structure, urgency cues, unusual punctuation)\n\n"
+        f"{direction}\n\n"
         "CRITICAL RULES:\n"
         "- Do NOT mention any model, score, or percentage.\n"
         "- Do NOT make any factual claims about the article's subject matter.\n"

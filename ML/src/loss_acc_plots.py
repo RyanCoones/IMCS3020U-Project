@@ -51,7 +51,7 @@ def plot_metric_over_epoch(df: pd.DataFrame, col: str, title: str, outpath: Path
 
 if __name__ == "__main__":
     # Add whatever models you logged with Lightning
-    model_names = ["bilstm", "rnn", "gru", "lstm"]
+    model_names = ["bilstm", "rnn", "gru", "lstm", "gru5000"]
 
     for name in model_names:
         vdir = find_latest_version_dir(name)

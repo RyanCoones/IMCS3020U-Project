@@ -2,7 +2,7 @@
 
 const COGNITO_DOMAIN = "https://us-east-2r9vc108ea.auth.us-east-2.amazoncognito.com";
 const CLIENT_ID = "47v1mbhis0gtrl7df2rm8n06nm";
-const API_BASE = "http://localhost:5050";
+const API_BASE = "https://crosscheck-production.up.railway.app";
 
 // ── SVG icons ────────────────────────────────────────────────────────────────
 const icons = {
@@ -130,6 +130,29 @@ document.getElementById("guestButton").addEventListener("click", showGuest);
 document.getElementById("signOutButton").addEventListener("click", signOut);
 document.getElementById("signInFromGuestButton").addEventListener("click", signIn);
 
+// ── Markdown renderer ─────────────────────────────────────────────────────────
+function renderMarkdown(text) {
+  const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const inline = s => s
+    .replace(/\*\*(.+?)\*\*/g, "<strong class='text-neutral-200 font-semibold'>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+  let html = "";
+  let inList = false;
+  for (const line of text.split("\n")) {
+    const t = line.trim();
+    if (/^[-*]\s+/.test(t)) {
+      if (!inList) { html += "<ul class='list-disc pl-4 space-y-0.5 my-1'>"; inList = true; }
+      html += `<li>${inline(esc(t.replace(/^[-*]\s+/, "")))}</li>`;
+    } else {
+      if (inList) { html += "</ul>"; inList = false; }
+      if (t) html += `<p class="mb-1">${inline(esc(t))}</p>`;
+    }
+  }
+  if (inList) html += "</ul>";
+  return html;
+}
+
 // ── Result rendering ──────────────────────────────────────────────────────────
 function renderResult(pct, explanation) {
   let card;
@@ -160,7 +183,7 @@ function renderResult(pct, explanation) {
   }
 
   const explanationHtml = explanation
-    ? `<div class="mt-2 bg-neutral-800 rounded-lg p-3 text-xs text-neutral-300 leading-relaxed whitespace-pre-wrap">${explanation}</div>`
+    ? `<div class="mt-2 bg-neutral-800 rounded-lg p-3 text-xs text-neutral-300 leading-relaxed">${renderMarkdown(explanation)}</div>`
     : "";
 
   resultField.innerHTML = card + explanationHtml;

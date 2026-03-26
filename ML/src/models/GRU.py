@@ -88,10 +88,17 @@ train_df = df.loc[train_ids]
 val_df   = df.loc[val_ids]
 test_df  = df.loc[test_ids]
 
-# vocabulary (top 10k words)
-all_words = " ".join(train_df["content"].astype(str)).lower().split() # ONLY BUILD VOCAB ON TRAIN DATA
+# vocabulary (top 5k words, excluding politically charged / named entity terms)
+_EXCLUDE = {
+    "trump", "clinton", "obama", "putin", "biden", "hillary", "zelensky",
+    "zionist", "extremist", "radical", "elites", "shariah", "sharia",
+    "propaganda", "israel", "iran", "syria", "isis", "hamas", "idf",
+}
+all_words = " ".join(train_df["content"].astype(str)).lower().split()  # ONLY BUILD VOCAB ON TRAIN DATA
 word_counts = Counter(all_words)
-vocab = {word: i + 2 for i, (word, _) in enumerate(word_counts.most_common(10000))}
+# over-fetch so we still land at exactly 5k after exclusions
+filtered_words = [(w, c) for w, c in word_counts.most_common(5000 + len(_EXCLUDE)) if w not in _EXCLUDE][:5000]
+vocab = {word: i + 2 for i, (word, _) in enumerate(filtered_words)}
 vocab["<PAD>"] = 0
 vocab["<UNK>"] = 1
 
@@ -109,15 +116,15 @@ test_loader  = DataLoader(TensorDataset(X_test, y_test, test_rid), batch_size=64
 model = GRUModel(vocab_size=len(vocab), embedding_dim=128, hidden_dim=256)
 
 # create paths
-model_path = models_dir / "gru_classifier.pt"
-vocab_path = vocabs_dir / "gru_vocab.json"
+model_path = models_dir / "gru_classifier5000.pt"
+vocab_path = vocabs_dir / "gru_vocab5000.json"
 
 # if the model has already been trained, load the weights, if not, train
 if model_path.exists() and vocab_path.exists():
     model.load_state_dict(torch.load(model_path, map_location="cpu"))
 else:
-    early_stopping = pl.callbacks.EarlyStopping(monitor="val_loss", stopping_threshold=0.03, mode="min")
-    logger = CSVLogger("ML/lightning_logs", name="gru")
+    early_stopping = pl.callbacks.EarlyStopping(monitor="val_loss", stopping_threshold=0.035, mode="min")
+    logger = CSVLogger("ML/lightning_logs", name="gru5000")
     trainer = pl.Trainer(max_epochs=10, accelerator="auto", callbacks=[early_stopping], logger=logger)
     trainer.fit(model, train_loader, val_loader)
 
@@ -158,7 +165,7 @@ test_preds = pd.DataFrame({
     "pred_label": np.where(y_pred == 1, "fake", "real"),
     "prob_fake": prob_fake,
 })
-test_preds.to_csv(preds_dir / "gru_test_preds.csv", index=False)
+test_preds.to_csv(preds_dir / "gru5000_test_preds.csv", index=False)
 
 print(f"Test accuracy: {test_accuracy:.4f}")
 print(classification_report(y_true, y_pred, target_names=["real", "fake"]))
@@ -178,8 +185,8 @@ misclassified["title"] = df.loc[misclassified["row_id"], "title"].values
 misclassified["text_snippet"] = df.loc[misclassified["row_id"], "text"].str.slice(0, 400).values
 
 print(f"Misclassified: {len(misclassified)} of {len(y_true)} samples ({mis_mask.mean()*100:.2f}% error rate)")
-print("First 20 misclassified rows (full list saved to ML/artifacts/gru_misclassified.csv):")
+print("First 20 misclassified rows (full list saved to ML/artifacts/gru5000_misclassified.csv):")
 print(misclassified.head(20).to_string(index=False))
 
 # save full errors for inspection
-misclassified.to_csv("ML/artifacts/gru_misclassified.csv", index=False)
+misclassified.to_csv("ML/artifacts/gru5000_misclassified.csv", index=False)
