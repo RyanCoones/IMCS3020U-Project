@@ -99,7 +99,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Checker />} />
             <Route path="/checker" element={<Checker />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/profile" element={<Profile onLogout={logout} />} />
             <Route path="/about" element={<About />} />
             <Route path="/recents" element={<Recents />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />

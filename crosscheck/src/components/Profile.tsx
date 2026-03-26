@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "react-oidc-context";
 import { API_BASE } from "../api";
-import { Settings, Trash2, Download, BarChart3 } from "lucide-react";
+import { Settings, Trash2, Download, BarChart3, LogOut } from "lucide-react";
 
 type HistoryItem = {
   id: string;
@@ -39,7 +39,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
   );
 }
 
-export default function Profile() {
+export default function Profile({ onLogout }: { onLogout?: () => void }) {
   const auth = useAuth();
   const claims = auth.user?.profile as Record<string, string | undefined>;
   const username = claims?.["cognito:username"] || "User";
@@ -221,6 +221,17 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {/* ── Sign out (mobile only) ── */}
+      {onLogout && (
+        <button
+          onClick={onLogout}
+          className="md:hidden flex items-center justify-center gap-2 w-full py-2.5 rounded-xl border border-neutral-700 bg-neutral-800 text-neutral-300 hover:text-neutral-100 hover:bg-neutral-700 transition-colors text-sm font-medium"
+        >
+          <LogOut size={15} />
+          Sign out
+        </button>
+      )}
 
       {/* ── Danger Zone ── */}
       <div className="bg-red-500/5 rounded-xl border border-red-500/20 p-4">
