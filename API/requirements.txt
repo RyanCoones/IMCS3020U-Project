@@ -14,3 +14,4 @@ python-dotenv
 httpx
 trafilatura
 boto3
+scikit-learn

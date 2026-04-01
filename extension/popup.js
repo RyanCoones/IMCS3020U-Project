@@ -2,7 +2,7 @@
 
 const COGNITO_DOMAIN = "https://us-east-2r9vc108ea.auth.us-east-2.amazoncognito.com";
 const CLIENT_ID = "47v1mbhis0gtrl7df2rm8n06nm";
-const API_BASE = "http://localhost:5050";
+const API_BASE = "https://crosscheck-production.up.railway.app";
 
 // ── SVG icons ────────────────────────────────────────────────────────────────
 const icons = {

@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 
 import json
+import pickle
 import re
 import unicodedata
 from concurrent.futures import ThreadPoolExecutor
@@ -16,6 +17,7 @@ from contextlib import asynccontextmanager
 from typing import Optional
 
 import boto3
+import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
 import torch
@@ -60,6 +62,72 @@ class GRUModel(pl.LightningModule):
 gru_model = GRUModel(vocab_size=len(vocab), embedding_dim=128, hidden_dim=256)
 gru_model.load_state_dict(torch.load(os.path.join(_HERE, "model", "gru_classifier.pt"), weights_only=True))
 gru_model.eval()
+
+# ---------------------------------------------------------------------------
+# Ensemble models (LSTM + NB + MLP meta-learner)
+# Falls back to GRU-only if artifacts are missing.
+# Run ML/stacking/export_api_models.py to generate the required files.
+# ---------------------------------------------------------------------------
+
+class LSTMModel(pl.LightningModule):
+    def __init__(self, vocab_size, embedding_dim, hidden_dim):
+        super().__init__()
+        self.embedding = nn.Embedding(vocab_size, embedding_dim)
+        self.lstm = nn.LSTM(embedding_dim, hidden_dim, batch_first=True)
+        self.fc = nn.Linear(hidden_dim, 1)
+        self.criterion = nn.BCEWithLogitsLoss()
+
+    def forward(self, x):
+        embedded = self.embedding(x)
+        _, (h_n, _) = self.lstm(embedded)
+        return self.fc(h_n[-1]).squeeze(1)
+
+
+class MLPMetaLearner(nn.Module):
+    def __init__(self, input_size=5, hidden1=64, hidden2=32, dropout=0.05):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(input_size, hidden1), nn.ReLU(), nn.Dropout(dropout),
+            nn.Linear(hidden1, hidden2),   nn.ReLU(), nn.Dropout(dropout),
+            nn.Linear(hidden2, 1),         nn.Sigmoid(),
+        )
+
+    def forward(self, x):
+        return self.net(x).squeeze(1)
+
+
+_ENSEMBLE_READY = False
+try:
+    from sklearn.feature_extraction.text import CountVectorizer  # noqa: F401
+
+    with open(os.path.join(_HERE, "model", "lstm_vocab.json")) as f:
+        _lstm_vocab = json.load(f)
+    _lstm_model = LSTMModel(vocab_size=len(_lstm_vocab), embedding_dim=128, hidden_dim=256)
+    _lstm_model.load_state_dict(torch.load(
+        os.path.join(_HERE, "model", "lstm_classifier.pt"), weights_only=True
+    ))
+    _lstm_model.eval()
+
+    with open(os.path.join(_HERE, "model", "nb_vectorizer.pkl"), "rb") as f:
+        _nb_vectorizer = pickle.load(f)
+    _nb_p = np.load(os.path.join(_HERE, "model", "nb_params.npz"))
+    _nb_log_class_ratio      = _nb_p["log_class_ratio"]
+    _nb_log_feature_prob     = _nb_p["log_feature_prob"]
+    _nb_neg_log_feature_prob = _nb_p["neg_log_feature_prob"]
+
+    with open(os.path.join(_HERE, "model", "mlp_scaler.pkl"), "rb") as f:
+        _mlp_scaler = pickle.load(f)
+    _mlp_model = MLPMetaLearner()
+    _mlp_model.load_state_dict(torch.load(
+        os.path.join(_HERE, "model", "mlp_best.pt"), map_location="cpu", weights_only=True
+    ))
+    _mlp_model.eval()
+
+    _ENSEMBLE_READY = True
+    print("[ensemble] All models loaded — using stacking ensemble.", flush=True)
+except FileNotFoundError as _e:
+    print(f"[ensemble] Missing file ({_e}) — using GRU only. "
+          "Run ML/stacking/export_api_models.py to enable ensemble.", flush=True)
 
 # ---------------------------------------------------------------------------
 # FastAPI app with lifespan (creates DB tables on startup + runs migrations)
@@ -197,6 +265,48 @@ def clean(text: str) -> str:
     return text
 
 # ---------------------------------------------------------------------------
+# Inference helpers
+# ---------------------------------------------------------------------------
+
+def _gru_prob(text: str) -> float:
+    seq    = text_to_sequence(text)
+    padded = pad_sequence(seq)
+    with torch.no_grad():
+        logits = gru_model(torch.tensor([padded], dtype=torch.long)).view(-1)
+    return torch.sigmoid(logits).item()
+
+
+def predict_ensemble(text: str) -> float:
+    """Run GRU + LSTM + NB through the MLP meta-learner. Returns P(fake)."""
+    gru_prob = _gru_prob(text)
+
+    # LSTM (own vocab)
+    words      = str(text).lower().split()
+    lstm_seq   = [_lstm_vocab.get(w, _lstm_vocab.get("<UNK>", 1)) for w in words]
+    lstm_pad   = lstm_seq[:400] + [0] * max(0, 400 - len(lstm_seq))
+    with torch.no_grad():
+        logits = _lstm_model(torch.tensor([lstm_pad], dtype=torch.long)).view(-1)
+    lstm_prob = torch.sigmoid(logits).item()
+
+    # NB
+    X     = _nb_vectorizer.transform([text])
+    joint = np.asarray(X @ (_nb_log_feature_prob - _nb_neg_log_feature_prob).T)
+    joint += _nb_log_class_ratio + _nb_neg_log_feature_prob.sum(axis=1)
+    log_p  = joint - joint.max(axis=1, keepdims=True)
+    probs  = np.exp(log_p); probs /= probs.sum(axis=1, keepdims=True)
+    nb_prob = float(probs[0, 1])
+
+    # MLP meta-learner
+    raw    = np.array([[gru_prob, lstm_prob, nb_prob]], dtype=np.float64)
+    scaled = _mlp_scaler.transform(raw).astype(np.float32)
+    std    = float(scaled.std(axis=1)[0])
+    spread = float(scaled.max(axis=1)[0] - scaled.min(axis=1)[0])
+    feat   = torch.tensor([[scaled[0, 0], scaled[0, 1], scaled[0, 2], std, spread]])
+    with torch.no_grad():
+        return _mlp_model(feat).item()
+
+
+# ---------------------------------------------------------------------------
 # Helper: get or create a User row from Cognito claims
 # ---------------------------------------------------------------------------
 
@@ -255,15 +365,8 @@ def predict_url(
     words = text.lower().split()[:400]
     text = " ".join(words)
 
-    # preprocess + run model
-    seq = text_to_sequence(text)
-    padded = pad_sequence(seq, max_len=400)
-    input_tensor = torch.tensor([padded], dtype=torch.long)
-
-    with torch.no_grad():
-        logits = gru_model(input_tensor).view(-1)
-        prob = torch.sigmoid(logits).item()
-
+    # run ensemble (or GRU fallback)
+    prob  = predict_ensemble(text) if _ENSEMBLE_READY else _gru_prob(text)
     label = "real" if prob >= 0.5 else "fake"
 
     # run GRU analysis and fact-check Lambda in parallel
