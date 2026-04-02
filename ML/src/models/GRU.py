@@ -8,7 +8,6 @@ from collections import Counter
 import numpy as np
 from sklearn.metrics import classification_report, confusion_matrix
 import json
-import matplotlib.pyplot as plt
 from pathlib import Path
 from pytorch_lightning.loggers import CSVLogger
 from ML.src.processing import *
