@@ -19,9 +19,10 @@
 #   - Output: ML/artifacts/preds/{gru,lstm,nb}_{train,val}_preds.csv
 #             columns: row_id, true_label, pred_label, prob_fake
 #
-# OOF is applied only to Naive Bayes (fast to re-fit per fold).
-# GRU / LSTM use their existing full-training-set weights for train inference —
-# true OOF for 99%+ neural nets adds marginal benefit and costs 5× training time.
+# OOF is applied to ALL three base models (GRU, LSTM, NB).
+# A fresh model is trained from scratch on k-1 folds per iteration.
+# No early stopping is used in OOF folds — there is no held-out validation set
+# that isn't the OOF target, so a fixed epoch budget is used instead.
 #
 # Run from the project root:
 #   python ML/stacking/generate_predictions.py
@@ -56,11 +57,12 @@ PREDS_DIR    = ARTIFACTS / "preds"
 SPLITS_DIR   = ML_DIR / "data" / "splits"
 DATASET_PATH = ML_DIR / "data" / "WELFake_Dataset.csv"
 
-EMBEDDING_DIM = 128
-HIDDEN_DIM    = 256
-INFER_BATCH   = 256
-K_FOLDS       = 5     # used for NB OOF only
-DEVICE        = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+EMBEDDING_DIM        = 128
+HIDDEN_DIM           = 256
+INFER_BATCH          = 256
+K_FOLDS              = 5
+TRAIN_EPOCHS_PER_FOLD = 5   # fixed epoch budget per OOF fold (no early stopping)
+DEVICE               = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 # ── shared helpers ────────────────────────────────────────────────────────────
@@ -207,12 +209,90 @@ def generate_nb_val(df: pd.DataFrame):
     print(f" done.\n  [NB val] Saved → {out_path}")
 
 
+# ── GRU / LSTM OOF train predictions ─────────────────────────────────────────
+def generate_oof_torch(model_name: str, model_class, df: pd.DataFrame, vocab: dict):
+    """K-fold OOF train predictions for a GRU or LSTM model.
+
+    Trains a fresh model on k-1 folds for TRAIN_EPOCHS_PER_FOLD epochs with no
+    early stopping (avoids any leakage from the OOF fold into training decisions).
+    Uses the global vocabulary built from the full training set — vocab construction
+    is label-independent so this is standard practice.
+    """
+    out_path = preds_path(model_name, "train")
+    if out_path.exists():
+        print(f"  [{model_name.upper()} OOF] already exists — skipping.")
+        return
+
+    train_df  = get_split_df(df, "train")
+    train_ids = train_df.index.to_numpy()
+    kf        = KFold(n_splits=K_FOLDS, shuffle=True, random_state=42)
+    oof_parts = []
+
+    print(f"  [{model_name.upper()} OOF] {K_FOLDS}-fold cross-validation "
+          f"({TRAIN_EPOCHS_PER_FOLD} epochs/fold, device={DEVICE}) …")
+
+    for fold_idx, (tr_idx, val_idx) in enumerate(kf.split(train_ids)):
+        print(f"    Fold {fold_idx + 1}/{K_FOLDS} — training …", flush=True)
+
+        fold_train_df = df.loc[train_ids[tr_idx]]
+        fold_val_df   = df.loc[train_ids[val_idx]]
+
+        X_tr,  y_tr,  _      = encode_split(fold_train_df, vocab)
+        X_val, y_val, id_val = encode_split(fold_val_df,   vocab)
+
+        train_loader = DataLoader(
+            TensorDataset(X_tr, y_tr), batch_size=64, shuffle=True
+        )
+        val_loader = DataLoader(
+            TensorDataset(X_val, y_val, id_val), batch_size=INFER_BATCH, shuffle=False
+        )
+
+        model     = model_class(vocab_size=len(vocab), embedding_dim=EMBEDDING_DIM, hidden_dim=HIDDEN_DIM)
+        model.to(DEVICE)
+        criterion = torch.nn.BCEWithLogitsLoss()
+        optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
+
+        for epoch in range(1, TRAIN_EPOCHS_PER_FOLD + 1):
+            model.train()
+            epoch_loss, n = 0.0, 0
+            for x_b, y_b in train_loader:
+                optimizer.zero_grad()
+                loss = criterion(model(x_b.to(DEVICE)).view(-1), y_b.to(DEVICE))
+                loss.backward()
+                optimizer.step()
+                epoch_loss += loss.item() * len(y_b)
+                n          += len(y_b)
+            print(f"      Epoch {epoch}/{TRAIN_EPOCHS_PER_FOLD}  loss={epoch_loss/n:.4f}", flush=True)
+
+        model.eval()
+        all_probs, all_true, all_ids = [], [], []
+        with torch.no_grad():
+            for x_b, y_b, id_b in val_loader:
+                logits = model(x_b.to(DEVICE)).view(-1)
+                probs  = torch.sigmoid(logits).cpu().numpy()
+                all_probs.append(probs)
+                all_true.append(y_b.numpy())
+                all_ids.append(id_b.numpy())
+
+        fold_preds = build_pred_df(
+            np.concatenate(all_ids),
+            np.concatenate(all_true),
+            np.concatenate(all_probs),   # P(real), consistent with run_torch_inference
+        )
+        oof_parts.append(fold_preds)
+        print(f"    Fold {fold_idx + 1} done — {len(fold_preds):,} OOF predictions.")
+
+    oof_df = pd.concat(oof_parts, ignore_index=True)
+    oof_df.to_csv(out_path, index=False)
+    print(f"  [{model_name.upper()} OOF] Saved → {out_path}  ({len(oof_df):,} rows)")
+
+
 # ── entry point ───────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     print("=" * 65)
-    print("Stacking: Generating base model predictions (OOF for train)")
+    print("Stacking: Generating base model predictions (OOF for ALL)")
     print("=" * 65)
-    print(f"NB OOF K_FOLDS={K_FOLDS}  Device={DEVICE}\n")
+    print(f"K_FOLDS={K_FOLDS}  EPOCHS_PER_FOLD={TRAIN_EPOCHS_PER_FOLD}  Device={DEVICE}\n")
 
     PREDS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -224,11 +304,14 @@ if __name__ == "__main__":
     with open(VOCABS_DIR / "gru_vocab.json")  as f: gru_vocab  = json.load(f)
     with open(VOCABS_DIR / "lstm_vocab.json") as f: lstm_vocab = json.load(f)
 
-    # ── GRU / LSTM: inference with pre-trained weights ────────────────────────
-    print("── GRU / LSTM predictions (pre-trained weights) ───────────────")
-    for split in ("train", "val"):
-        generate_torch_split("gru",  GRUModel,  df, gru_vocab,  split)
-        generate_torch_split("lstm", LSTMModel, df, lstm_vocab, split)
+    # ── GRU / LSTM: OOF for train, pre-trained weights for val ───────────────
+    print("── GRU / LSTM OOF train predictions ───────────────────────────")
+    generate_oof_torch("gru",  GRUModel,  df, gru_vocab)
+    generate_oof_torch("lstm", LSTMModel, df, lstm_vocab)
+
+    print("\n── GRU / LSTM val predictions (full-dataset weights) ──────────")
+    generate_torch_split("gru",  GRUModel,  df, gru_vocab,  "val")
+    generate_torch_split("lstm", LSTMModel, df, lstm_vocab, "val")
 
     # ── NB: OOF for train (unbiased), full-fit for val ────────────────────────
     print("\n── NB predictions ─────────────────────────────────────────────")

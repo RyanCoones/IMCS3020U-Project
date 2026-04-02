@@ -8,6 +8,14 @@
 # Optimal classification threshold is selected by maximising F1 on the
 # validation split, then applied to the test split (no test-set peeking).
 #
+# Saves to ML/artifacts/:
+#   plots/roc_curves.png          — ROC curves for all 4 models
+#   plots/confusion_matrix.png    — MLP confusion matrix heatmap
+#   plots/metrics_comparison.png  — F1 / AUC bar chart
+#   plots/prob_distributions.png  — MLP output histogram by true class
+#   metrics.json                  — all test metrics as JSON
+#   metrics.csv                   — comparison table as CSV
+#
 # Usage (from project root):
 #   python ML/stacking/evaluate.py
 #
@@ -23,15 +31,20 @@ ML_DIR       = SCRIPT_DIR.parent
 PROJECT_ROOT = ML_DIR.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
+import json
 import numpy as np
 import pandas as pd
 import torch
+import matplotlib
+matplotlib.use("Agg")   # non-interactive backend — safe for scripts
+import matplotlib.pyplot as plt
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
     recall_score,
     f1_score,
     roc_auc_score,
+    roc_curve,
     confusion_matrix,
 )
 
@@ -40,6 +53,7 @@ from ML.stacking.mlp  import MLPMetaLearner
 
 CHECKPOINT_PATH = SCRIPT_DIR / "checkpoints" / "best_mlp.pt"
 PREDS_DIR       = ML_DIR / "artifacts" / "preds"
+PLOTS_DIR       = ML_DIR / "artifacts" / "plots"
 DEVICE          = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -74,19 +88,25 @@ def find_best_threshold(y_true: np.ndarray, y_prob: np.ndarray) -> float:
 def compute_metrics(y_true: np.ndarray, y_prob: np.ndarray, threshold: float = 0.5) -> dict:
     y_pred = (y_prob >= threshold).astype(int)
     return {
-        "accuracy":  accuracy_score(y_true, y_pred),
-        "precision": precision_score(y_true, y_pred, zero_division=0),
-        "recall":    recall_score(y_true, y_pred, zero_division=0),
-        "f1":        f1_score(y_true, y_pred, zero_division=0),
-        "auc":       roc_auc_score(y_true, y_prob),
+        "accuracy":  float(accuracy_score(y_true, y_pred)),
+        "precision": float(precision_score(y_true, y_pred, zero_division=0)),
+        "recall":    float(recall_score(y_true, y_pred, zero_division=0)),
+        "f1":        float(f1_score(y_true, y_pred, zero_division=0)),
+        "auc":       float(roc_auc_score(y_true, y_prob)),
     }
 
 
-# ── base model metrics ────────────────────────────────────────────────────────
-def base_model_metrics(model_name: str) -> dict:
+# ── base model helpers ────────────────────────────────────────────────────────
+def load_base_model_probs(model_name: str) -> tuple[np.ndarray, np.ndarray]:
+    """Return (y_true, y_prob) from a base model's test prediction CSV."""
     df     = pd.read_csv(PREDS_DIR / f"{model_name}_test_preds.csv")
     y_true = (df["true_label"] == "fake").astype(int).to_numpy()
     y_prob = df["prob_fake"].to_numpy(dtype=float)
+    return y_true, y_prob
+
+
+def base_model_metrics(model_name: str) -> dict:
+    y_true, y_prob = load_base_model_probs(model_name)
     return compute_metrics(y_true, y_prob)
 
 
@@ -116,6 +136,145 @@ def print_confusion_matrix(y_true: np.ndarray, y_prob: np.ndarray, threshold: fl
     print(f"  Actual Real  {tn:>14,}  {fp:>14,}")
     print(f"  Actual Fake  {fn:>14,}  {tp:>14,}")
     print(f"\n  TN={tn:,}  FP={fp:,}  FN={fn:,}  TP={tp:,}")
+
+
+# ── plot helpers ──────────────────────────────────────────────────────────────
+COLORS = {
+    "GRU":          "#4C72B0",
+    "LSTM":         "#DD8452",
+    "Naive Bayes":  "#55A868",
+    "MLP Ensemble": "#C44E52",
+}
+
+
+def _save_roc_curves(all_probs: dict, output_path: Path):
+    """ROC curves for all 4 models on one plot."""
+    fig, ax = plt.subplots(figsize=(7, 6))
+    ax.plot([0, 1], [0, 1], "k--", lw=1, label="Random (AUC = 0.50)")
+
+    for name, (y_true, y_prob) in all_probs.items():
+        fpr, tpr, _ = roc_curve(y_true, y_prob)
+        auc = roc_auc_score(y_true, y_prob)
+        ax.plot(fpr, tpr, color=COLORS[name], lw=2, label=f"{name} (AUC = {auc:.4f})")
+
+    ax.set_xlabel("False Positive Rate", fontsize=12)
+    ax.set_ylabel("True Positive Rate", fontsize=12)
+    ax.set_title("ROC Curves — All Models (Test Split)", fontsize=13, fontweight="bold")
+    ax.legend(loc="lower right", fontsize=10)
+    ax.set_xlim([0, 1]); ax.set_ylim([0, 1.01])
+    ax.grid(alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=150)
+    plt.close(fig)
+    print(f"  Saved → {output_path}")
+
+
+def _save_confusion_matrix(y_true: np.ndarray, y_prob: np.ndarray,
+                           threshold: float, output_path: Path):
+    """Confusion matrix heatmap for the MLP ensemble."""
+    y_pred = (y_prob >= threshold).astype(int)
+    cm = confusion_matrix(y_true, y_pred)
+
+    fig, ax = plt.subplots(figsize=(5, 4))
+    im = ax.imshow(cm, interpolation="nearest", cmap="Blues")
+    fig.colorbar(im, ax=ax)
+
+    labels = ["Real", "Fake"]
+    ax.set_xticks([0, 1]); ax.set_xticklabels(labels, fontsize=11)
+    ax.set_yticks([0, 1]); ax.set_yticklabels(labels, fontsize=11)
+    ax.set_xlabel("Predicted", fontsize=12)
+    ax.set_ylabel("Actual", fontsize=12)
+    ax.set_title(f"MLP Ensemble — Confusion Matrix\n(threshold = {threshold:.2f})",
+                 fontsize=12, fontweight="bold")
+
+    for i in range(2):
+        for j in range(2):
+            ax.text(j, i, f"{cm[i, j]:,}", ha="center", va="center",
+                    fontsize=14, color="white" if cm[i, j] > cm.max() / 2 else "black")
+
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=150)
+    plt.close(fig)
+    print(f"  Saved → {output_path}")
+
+
+def _save_metrics_comparison(results: dict, output_path: Path):
+    """Grouped bar chart of F1 and AUC-ROC for all models."""
+    names  = list(results.keys())
+    f1s    = [results[n]["f1"]  for n in names]
+    aucs   = [results[n]["auc"] for n in names]
+    x      = np.arange(len(names))
+    width  = 0.35
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+    bars1 = ax.bar(x - width / 2, f1s,  width, label="F1 Score",
+                   color=[COLORS[n] for n in names], alpha=0.85)
+    bars2 = ax.bar(x + width / 2, aucs, width, label="AUC-ROC",
+                   color=[COLORS[n] for n in names], alpha=0.50, edgecolor="black", linewidth=0.8)
+
+    for bar in (*bars1, *bars2):
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.003,
+                f"{bar.get_height():.4f}", ha="center", va="bottom", fontsize=8)
+
+    ax.set_xticks(x); ax.set_xticklabels(names, fontsize=11)
+    ax.set_ylim([min(f1s + aucs) - 0.02, 1.01])
+    ax.set_ylabel("Score", fontsize=12)
+    ax.set_title("Model Comparison — F1 & AUC-ROC (Test Split)",
+                 fontsize=13, fontweight="bold")
+    ax.legend(fontsize=10)
+    ax.grid(axis="y", alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=150)
+    plt.close(fig)
+    print(f"  Saved → {output_path}")
+
+
+def _save_prob_distributions(y_true: np.ndarray, y_prob: np.ndarray,
+                             threshold: float, output_path: Path):
+    """Histogram of MLP output probabilities split by true class."""
+    real_probs = y_prob[y_true == 0]
+    fake_probs = y_prob[y_true == 1]
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+    bins = np.linspace(0, 1, 51)
+    ax.hist(real_probs, bins=bins, alpha=0.6, color="#4C72B0", label="Actual Real")
+    ax.hist(fake_probs, bins=bins, alpha=0.6, color="#C44E52", label="Actual Fake")
+    ax.axvline(threshold, color="black", linestyle="--", lw=1.5,
+               label=f"Threshold = {threshold:.2f}")
+    ax.set_xlabel("MLP Output Probability", fontsize=12)
+    ax.set_ylabel("Count", fontsize=12)
+    ax.set_title("MLP Predicted Probability Distribution by True Class (Test Split)",
+                 fontsize=12, fontweight="bold")
+    ax.legend(fontsize=10)
+    ax.grid(alpha=0.3)
+    fig.tight_layout()
+    fig.savefig(output_path, dpi=150)
+    plt.close(fig)
+    print(f"  Saved → {output_path}")
+
+
+def save_plots_and_metrics(results: dict, all_probs: dict,
+                           y_true_mlp: np.ndarray, y_prob_mlp: np.ndarray,
+                           threshold: float):
+    PLOTS_DIR.mkdir(parents=True, exist_ok=True)
+    artifacts_dir = ML_DIR / "artifacts"
+
+    print("\nSaving plots …")
+    _save_roc_curves(all_probs, PLOTS_DIR / "roc_curves.png")
+    _save_confusion_matrix(y_true_mlp, y_prob_mlp, threshold, PLOTS_DIR / "confusion_matrix.png")
+    _save_metrics_comparison(results, PLOTS_DIR / "metrics_comparison.png")
+    _save_prob_distributions(y_true_mlp, y_prob_mlp, threshold, PLOTS_DIR / "prob_distributions.png")
+
+    print("\nSaving metrics files …")
+    metrics_json = artifacts_dir / "metrics.json"
+    with open(metrics_json, "w") as f:
+        json.dump({"threshold": threshold, "models": results}, f, indent=2)
+    print(f"  Saved → {metrics_json}")
+
+    rows = [{"model": name, **m} for name, m in results.items()]
+    metrics_csv = artifacts_dir / "metrics.csv"
+    pd.DataFrame(rows).to_csv(metrics_csv, index=False, float_format="%.6f")
+    print(f"  Saved → {metrics_csv}")
 
 
 # ── entry point ───────────────────────────────────────────────────────────────
@@ -160,6 +319,26 @@ def evaluate():
     print_comparison_table(results)
     print_confusion_matrix(y_true, y_prob_mlp, threshold)
     print()
+
+    # collect raw probs for all models (needed for ROC plot)
+    all_probs = {
+        "GRU":          load_base_model_probs("gru"),
+        "LSTM":         load_base_model_probs("lstm"),
+        "Naive Bayes":  load_base_model_probs("nb"),
+        "MLP Ensemble": (y_true, y_prob_mlp),
+    }
+
+    save_plots_and_metrics(results, all_probs, y_true, y_prob_mlp, threshold)
+
+    print("\n" + "=" * 70)
+    print("Artifacts saved to ML/artifacts/")
+    print("  plots/roc_curves.png")
+    print("  plots/confusion_matrix.png")
+    print("  plots/metrics_comparison.png")
+    print("  plots/prob_distributions.png")
+    print("  metrics.json")
+    print("  metrics.csv")
+    print("=" * 70)
 
 
 if __name__ == "__main__":
