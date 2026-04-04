@@ -30,10 +30,11 @@ export default function About() {
         <div className="space-y-1.5">
           <p className="text-xs font-semibold text-blue-400 uppercase tracking-wide">Concern Level</p>
           <p className="text-sm text-neutral-400 leading-relaxed">
-            A GRU neural network trained on thousands of news articles analyses the writing style and
-            linguistic patterns of the article — not its facts. It detects signals like emotionally charged
-            language, vague attribution, sensationalist phrasing, and structural patterns that appear more
-            frequently in unreliable content. The result is a concern level, not a verdict.
+            A stacked generalisation ensemble — combining a GRU, LSTM, and Naive Bayes classifier under a
+            learned meta-learner — analyses the writing style and linguistic patterns of the article, not its
+            facts. It detects signals like emotionally charged language, vague attribution, sensationalist
+            phrasing, and structural patterns that appear more frequently in unreliable content. The result
+            is a concern level, not a verdict.
           </p>
           <div className="flex flex-wrap gap-2 pt-1">
             <span className="text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 rounded-full px-2.5 py-0.5">No Concerns Detected — &lt; 25%</span>
@@ -65,12 +66,31 @@ export default function About() {
         </div>
 
         <p className="text-sm text-neutral-400 leading-relaxed">
-          CrossCheck uses a <span className="text-neutral-200 font-medium">Gated Recurrent Unit (GRU)</span> classifier — a sequence model with a reset gate and an update gate, making it more computationally efficient than an LSTM while capturing long-range linguistic dependencies. The GRU was selected after comparing five architectures (RNN, Naive Bayes, LSTM, BiLSTM, GRU) trained and evaluated on identical data splits.
+          CrossCheck uses a <span className="text-neutral-200 font-medium">stacked generalisation ensemble</span> — a meta-learning architecture that combines three complementary base models under a learned meta-learner, weighting their predictions based on agreement and individual confidence.
         </p>
+
+        {/* Architecture breakdown */}
+        <div className="space-y-2">
+          <p className="text-xs font-semibold text-neutral-300">Architecture</p>
+          <div className="space-y-2">
+            <div className="bg-neutral-700/40 rounded-lg p-3 space-y-1">
+              <p className="text-xs font-semibold text-blue-400 uppercase tracking-wide">Base Models</p>
+              <ul className="space-y-1.5 text-sm text-neutral-400">
+                <li><span className="text-neutral-200 font-medium">GRU</span> — Gated Recurrent Unit. Captures long-range linguistic dependencies via reset and update gates; computationally efficient and selected as the strongest individual performer across five evaluated architectures (RNN, Naive Bayes, LSTM, BiLSTM, GRU).</li>
+                <li><span className="text-neutral-200 font-medium">LSTM</span> — Long Short-Term Memory. Similar sequence model with a more expressive gating mechanism (input, forget, output gates), providing complementary failure modes to the GRU.</li>
+                <li><span className="text-neutral-200 font-medium">Naive Bayes</span> — Bernoulli probabilistic classifier operating on word-level presence features. Provides a statistically independent signal from a fundamentally different modelling approach.</li>
+              </ul>
+            </div>
+            <div className="bg-neutral-700/40 rounded-lg p-3 space-y-1">
+              <p className="text-xs font-semibold text-purple-400 uppercase tracking-wide">Meta-Learner</p>
+              <p className="text-sm text-neutral-400">A two-layer MLP (ReLU activations, 5% dropout) trained on out-of-fold (OOF) predictions from each base model. Input features include each model's individual probability, their standard deviation, and their spread — allowing the meta-learner to detect disagreement and down-weight uncertain or conflicting predictions.</p>
+            </div>
+          </div>
+        </div>
 
         {/* Performance metrics */}
         <div>
-          <p className="text-xs text-neutral-500 mb-2">Test set performance — WELFake dataset</p>
+          <p className="text-xs text-neutral-500 mb-2">GRU base model — test set performance on WELFake dataset</p>
           <div className="grid grid-cols-4 gap-2">
             <MetricPill label="Accuracy"   value="99.04%" accent="border-blue-500/30 bg-blue-500/5" />
             <MetricPill label="Macro F1"   value="0.9904" accent="border-blue-500/30 bg-blue-500/5" />
@@ -85,18 +105,26 @@ export default function About() {
         <div className="space-y-1">
           <p className="text-xs font-semibold text-neutral-300">Training Dataset</p>
           <p className="text-sm text-neutral-400 leading-relaxed">
-            Models were trained and evaluated on the <span className="text-neutral-200">WELFake dataset</span> (Kaggle), containing 72,134 news articles split nearly evenly between real and fake classes. The dataset was shuffled and divided 80 / 10 / 10 into training, validation, and test sets. Article text was normalised, lowercased, and mapped to a 10,000-word vocabulary. Input sequences were padded or truncated to 400 tokens.
+            All models were trained and evaluated on the <span className="text-neutral-200">WELFake dataset</span> (Kaggle), containing 72,134 news articles split nearly evenly between real and fake classes. The dataset was shuffled and divided 80 / 10 / 10 into training, validation, and test sets. Article text was normalised, lowercased, and mapped to a 10,000-word vocabulary. Input sequences were padded or truncated to 400 tokens. The meta-learner was trained separately on out-of-fold predictions to prevent data leakage.
           </p>
         </div>
 
         <div className="border-t border-neutral-700/60" />
 
         {/* Known limitations */}
-        <div className="space-y-1">
+        <div className="space-y-2">
           <p className="text-xs font-semibold text-orange-400">Known Limitations</p>
-          <p className="text-sm text-neutral-400 leading-relaxed">
-            Despite high test-set accuracy, the model exhibits a <span className="text-orange-300 font-medium">political topic bias</span>: 73% of the GRU's misclassifications involve articles containing political language. This is because the training data contains a political topic bias, causing the model to associate political vocabulary with fake news. Legitimate political journalism may therefore receive elevated concern levels. This is an active area of improvement.
-          </p>
+          <ul className="space-y-3">
+            <li className="text-sm text-neutral-400 leading-relaxed">
+              <span className="text-orange-300 font-medium">Political topic bias.</span> 73% of the GRU's misclassifications involve articles containing political language. Because the WELFake dataset over-represents political content in its fake-news class, all base models have learned to associate political vocabulary with lower credibility. Legitimate political journalism may receive elevated concern levels as a result.
+            </li>
+            <li className="text-sm text-neutral-400 leading-relaxed">
+              <span className="text-orange-300 font-medium">Limited training data scope.</span> The WELFake dataset was compiled primarily from American news sources circa 2021. The models' understanding of writing style, framing conventions, and language patterns reflects this scope — they may generalise poorly to non-American publications, non-English sources translated to English, or coverage styles that have evolved since the dataset was collected.
+            </li>
+            <li className="text-sm text-neutral-400 leading-relaxed">
+              <span className="text-orange-300 font-medium">Web crawler access restrictions.</span> Article text is extracted automatically from the submitted URL. In an era of increased AI-driven scraping, some publishers have introduced bot detection, paywalls, or crawler-blocking measures that prevent full text retrieval. When this occurs, CrossCheck analyses only a partial or empty extract, which may produce unreliable results. The fact-check step is similarly affected, as claims cannot be extracted from content that was not retrieved.
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -107,20 +135,20 @@ export default function About() {
           Research & Future Work
         </div>
         <p className="text-sm text-neutral-400 leading-relaxed">
-          CrossCheck is an active research project. Ongoing work focuses on reducing the model's susceptibility to topic bias through two approaches:
+          CrossCheck is an active research project. Work has focused on reducing the model's susceptibility to topic bias and improving robustness.
         </p>
         <ul className="space-y-2">
           <li className="flex gap-3 text-sm text-neutral-400">
-            <span className="shrink-0 w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold mt-0.5">1</span>
-            <span><span className="text-neutral-200 font-medium">Adversarial Debiasing</span> — training an adversary alongside the classifier that attempts to predict topic information from the model's output, penalising topic-dependent predictions.</span>
+            <span className="shrink-0 w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold mt-0.5">✓</span>
+            <span><span className="text-neutral-200 font-medium">Stacked Generalisation</span> — combining GRU, LSTM, and Naive Bayes under an MLP meta-learner trained on out-of-fold predictions. The meta-learner exploits disagreement between base models to improve robustness on ambiguous examples. <span className="text-emerald-400 text-xs font-medium">Implemented.</span></span>
           </li>
           <li className="flex gap-3 text-sm text-neutral-400">
             <span className="shrink-0 w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold mt-0.5">2</span>
-            <span><span className="text-neutral-200 font-medium">Stacked Generalisation</span> — combining multiple models with complementary weaknesses under a meta-learner that determines which predictions to trust.</span>
+            <span><span className="text-neutral-200 font-medium">Adversarial Debiasing</span> — training an adversary alongside the classifier that attempts to predict topic information from the model's output, penalising topic-dependent predictions.</span>
           </li>
           <li className="flex gap-3 text-sm text-neutral-400">
             <span className="shrink-0 w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold mt-0.5">3</span>
-            <span><span className="text-neutral-200 font-medium">Transformer model</span> — evaluating a transformer-based architecture to compare against the current GRU baseline.</span>
+            <span><span className="text-neutral-200 font-medium">Transformer model</span> — evaluating a transformer-based architecture to compare against the current ensemble baseline.</span>
           </li>
         </ul>
       </div>

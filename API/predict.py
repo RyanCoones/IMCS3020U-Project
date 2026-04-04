@@ -234,13 +234,17 @@ def generate_gru_analysis(text: str, title: str | None, prob: float = 0.0) -> st
         "- The text below has been automatically extracted and preprocessed: it has been lowercased and "
         "normalised for machine analysis. Do NOT treat the lack of capitalisation as a credibility signal.\n"
         "- The text is limited to the first 400 words of the article and may end mid-sentence. "
-        "Do NOT treat truncation as a credibility signal.\n\n"
+        "Do NOT treat truncation as a credibility signal.\n"
+        "- The extraction is automated and may include incidental fragments such as advertisement copy, "
+        "newsletter sign-up prompts, cookie consent notices, or titles/teasers of other articles linked on "
+        "the page. These are extraction artefacts — ignore them entirely and focus only on the main article prose.\n\n"
         f"Article title: {title or 'Unknown'}\n"
         f"Article text (first 400 words):\n{text}\n\n"
         f"{direction}\n\n"
         "CRITICAL RULES:\n"
         "- Do NOT mention any model, score, or percentage.\n"
         "- Do NOT comment on capitalisation, lowercasing, or truncation — these are preprocessing artefacts.\n"
+        "- Do NOT flag or comment on advertisement fragments, linked article titles, or other extraction noise — ignore them.\n"
         "- Do NOT make any factual claims about the article's subject matter.\n"
         "- Do NOT verify or comment on whether any claims in the article are true or false.\n"
         "- Do NOT mention specific people, places, events, or dates from the article.\n"
@@ -374,7 +378,15 @@ def predict_url(
 ):
     # extract article — trafilatura for body text, newspaper4k for title
     downloaded = trafilatura.fetch_url(req.url)
-    text = clean(trafilatura.extract(downloaded) or "") if downloaded else ""
+    text = (
+        clean(trafilatura.extract(
+            downloaded,
+            favor_precision=True,       # prefer less text over including boilerplate/ads
+            include_comments=False,     # skip comment sections
+            include_tables=False,       # skip data tables (often navigation/ad grids)
+        ) or "")
+        if downloaded else ""
+    )
 
     # fallback to newspaper4k if trafilatura got nothing
     if not text:
