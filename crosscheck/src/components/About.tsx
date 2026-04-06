@@ -31,7 +31,7 @@ export default function About() {
           <p className="text-xs font-semibold text-blue-400 uppercase tracking-wide">Concern Level</p>
           <p className="text-sm text-neutral-400 leading-relaxed">
             A stacked generalisation ensemble — combining a GRU, LSTM, and Naive Bayes classifier under a
-            learned meta-learner — analyses the writing style and linguistic patterns of the article, not its
+            learned meta-learner — analyzes the writing style and linguistic patterns of the article, not its
             facts. It detects signals like emotionally charged language, vague attribution, sensationalist
             phrasing, and structural patterns that appear more frequently in unreliable content. The result
             is a concern level, not a verdict.
@@ -49,7 +49,7 @@ export default function About() {
           <p className="text-xs font-semibold text-purple-400 uppercase tracking-wide">Fact Check</p>
           <p className="text-sm text-neutral-400 leading-relaxed">
             Specific verifiable claims are extracted from the article and searched on the web using Brave Search.
-            The results are then analysed by an AI to assess whether each claim is{" "}
+            The results are then analyzed by an AI to assess whether each claim is{" "}
             <span className="text-emerald-400 font-medium">Supported</span>,{" "}
             <span className="text-red-400 font-medium">Contradicted</span>, or{" "}
             <span className="text-neutral-300 font-medium">Unverified</span>{" "}
@@ -98,6 +98,24 @@ export default function About() {
             <MetricPill label="Brier Score" value="0.0074" accent="border-blue-500/30 bg-blue-500/5" />
           </div>
         </div>
+        <div>
+          <p className="text-xs text-neutral-500 mb-2">LSTM base model — test set performance on WELFake dataset</p>
+          <div className="grid grid-cols-4 gap-2">
+            <MetricPill label="Accuracy"   value="98.64%" accent="border-blue-500/30 bg-blue-500/5" />
+            <MetricPill label="Macro F1"   value="0.9864" accent="border-blue-500/30 bg-blue-500/5" />
+            <MetricPill label="ROC-AUC"    value="0.9987" accent="border-blue-500/30 bg-blue-500/5" />
+            <MetricPill label="Brier Score" value="0.0118" accent="border-blue-500/30 bg-blue-500/5" />
+          </div>
+        </div>
+        <div>
+          <p className="text-xs text-neutral-500 mb-2">NB base model — test set performance on WELFake dataset</p>
+          <div className="grid grid-cols-4 gap-2">
+            <MetricPill label="Accuracy"   value="81.20%" accent="border-blue-500/30 bg-blue-500/5" />
+            <MetricPill label="Macro F1"   value="0.8103" accent="border-blue-500/30 bg-blue-500/5" />
+            <MetricPill label="ROC-AUC"    value="0.9153" accent="border-blue-500/30 bg-blue-500/5" />
+            <MetricPill label="Brier Score" value="0.1815" accent="border-blue-500/30 bg-blue-500/5" />
+          </div>
+        </div>
 
         <div className="border-t border-neutral-700/60" />
 
@@ -122,7 +140,7 @@ export default function About() {
               <span className="text-orange-300 font-medium">Limited training data scope.</span> The WELFake dataset was compiled primarily from American news sources circa 2021. The models' understanding of writing style, framing conventions, and language patterns reflects this scope — they may generalise poorly to non-American publications, non-English sources translated to English, or coverage styles that have evolved since the dataset was collected.
             </li>
             <li className="text-sm text-neutral-400 leading-relaxed">
-              <span className="text-orange-300 font-medium">Web crawler access restrictions.</span> Article text is extracted automatically from the submitted URL. In an era of increased AI-driven scraping, some publishers have introduced bot detection, paywalls, or crawler-blocking measures that prevent full text retrieval. When this occurs, CrossCheck analyses only a partial or empty extract, which may produce unreliable results. The fact-check step is similarly affected, as claims cannot be extracted from content that was not retrieved.
+              <span className="text-orange-300 font-medium">Web crawler access restrictions.</span> Article text is extracted automatically from the submitted URL. In an era of increased AI-driven scraping, some publishers have introduced bot detection, paywalls, or crawler-blocking measures that prevent full text retrieval. When this occurs, CrossCheck analyzes only a partial or empty extract, which may produce unreliable results. The fact-check step is similarly affected, as claims cannot be extracted from content that was not retrieved.
             </li>
           </ul>
         </div>
@@ -145,10 +163,6 @@ export default function About() {
           <li className="flex gap-3 text-sm text-neutral-400">
             <span className="shrink-0 w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold mt-0.5">2</span>
             <span><span className="text-neutral-200 font-medium">Adversarial Debiasing</span> — training an adversary alongside the classifier that attempts to predict topic information from the model's output, penalising topic-dependent predictions.</span>
-          </li>
-          <li className="flex gap-3 text-sm text-neutral-400">
-            <span className="shrink-0 w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold mt-0.5">3</span>
-            <span><span className="text-neutral-200 font-medium">Transformer model</span> — evaluating a transformer-based architecture to compare against the current ensemble baseline.</span>
           </li>
         </ul>
       </div>

@@ -165,7 +165,7 @@ function App() {
             </div>
             <div>
               <p className="text-sm font-medium text-neutral-200">ML-backed credibility scoring</p>
-              <p className="text-xs text-neutral-500">GRU neural network trained on real and fake news datasets</p>
+              <p className="text-xs text-neutral-500">Stacked generalization ensemble trained on real and fake news datasets</p>
             </div>
           </div>
           <div className="flex items-center gap-3 bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3">
