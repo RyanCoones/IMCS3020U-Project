@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import { API_BASE } from "../api";
-import { ShieldCheck, Trash2, Sparkles, ChevronUp, ListChecks } from "lucide-react";
+import { ShieldCheck, Trash2, Sparkles, ChevronUp, ListChecks, RefreshCw } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
 type FactCheckClaim = {
@@ -81,13 +81,11 @@ export default function Recents() {
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchHistory = () => {
     const idToken = auth.user?.id_token;
-    if (!idToken) {
-      setLoading(false);
-      return;
-    }
-
+    if (!idToken) { setLoading(false); return; }
+    setLoading(true);
+    setError(null);
     fetch(`${API_BASE}/history`, {
       headers: { Authorization: `Bearer ${idToken}` },
     })
@@ -98,7 +96,9 @@ export default function Recents() {
       .then((data) => setItems(data))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [auth.user?.id_token]);
+  };
+
+  useEffect(() => { fetchHistory(); }, [auth.user?.id_token]);
 
   const deleteItem = async (id: string) => {
     const idToken = auth.user?.id_token;
@@ -232,9 +232,19 @@ export default function Recents() {
 
   return (
     <div className="flex flex-col gap-5 bg-neutral-900 border border-neutral-800 rounded-xl p-5 w-full max-w-4xl mx-auto shadow-lg shadow-black/30">
-      <div>
-        <h1 className="text-xl font-bold text-neutral-100">Recently Checked</h1>
-        <p className="text-neutral-400 text-sm mt-1">Your 50 most recent checks.</p>
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <h1 className="text-xl font-bold text-neutral-100">Recently Checked</h1>
+          <p className="text-neutral-400 text-sm mt-1">Your 50 most recent checks.</p>
+        </div>
+        <button
+          onClick={fetchHistory}
+          disabled={loading}
+          className="p-2 rounded-lg text-neutral-500 hover:text-neutral-300 hover:bg-neutral-800 transition-colors disabled:opacity-40 cursor-pointer"
+          title="Refresh"
+        >
+          <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
+        </button>
       </div>
       {renderContent()}
     </div>
