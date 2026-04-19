@@ -65,31 +65,31 @@ We trained and compared five classification models (Bernoulli Naive Bayes, RNN, 
 
 The entry point to CrossCheck --- introduces the tool and its capabilities.
 
-![Landing Page](readme_media/landing.png)
+<p align="center"><img src="readme_media/landing.png" alt="Landing Page" width="800"></p>
 
 ### Checker Page
 
 Paste a URL to see the full credibility analysis.
 
-![Checker Page](screenshots/checker.png)
+<p align="center"><img src="readme_media/checker.png" alt="Checker Page" width="800"></p>
 
 ### History Page
 
 Browse previously analyzed articles and their verdicts.
 
-![History Page](screenshots/history.png)
+<p align="center"><img src="readme_media/recents.png" alt="History Page" width="800"></p>
 
 ### About Page
 
 Learn about the project, and the models behind the scenes.
 
-![About Page](screenshots/about.png)
+<p align="center"><img src="readme_media/about.png" alt="About Page" width="800"></p>
 
 ### Profile Page
 
 Manage your account and view your personal usage statistics.
 
-![Profile Page](screenshots/profile.png)
+<p align="center"><img src="readme_media/profile.png" alt="Profile Page" width="800"></p>
 
 ---
 
