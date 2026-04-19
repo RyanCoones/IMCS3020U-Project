@@ -368,6 +368,8 @@ def get_or_create_user(claims: dict, db: Session) -> User:
 
 class PredictUrlRequest(BaseModel):
     url: str
+    skip_analysis: bool = False
+    skip_factcheck: bool = False
 
 
 @app.post("/predict_url")
@@ -415,12 +417,12 @@ def predict_url(
     prob  = predict_ensemble(text) if _ENSEMBLE_READY else _gru_prob(text)
     label = "real" if prob >= 0.5 else "fake"
 
-    # run GRU analysis and fact-check Lambda in parallel
+    # run GRU analysis and fact-check Lambda in parallel (either can be skipped per request)
     with ThreadPoolExecutor(max_workers=2) as pool:
-        fut_analysis  = pool.submit(generate_gru_analysis, text, title, prob)
-        fut_factcheck = pool.submit(invoke_fact_check_lambda, text, title)
-        explanation      = fut_analysis.result()
-        fact_check_list  = fut_factcheck.result()
+        fut_analysis  = None if req.skip_analysis  else pool.submit(generate_gru_analysis, text, title, prob)
+        fut_factcheck = None if req.skip_factcheck else pool.submit(invoke_fact_check_lambda, text, title)
+        explanation     = fut_analysis.result()  if fut_analysis  else None
+        fact_check_list = fut_factcheck.result() if fut_factcheck else None
 
     fact_check_json = json.dumps(fact_check_list) if fact_check_list else None
 

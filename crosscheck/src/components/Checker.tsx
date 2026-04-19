@@ -57,11 +57,23 @@ function FactCheckClaimCard({ item }: { item: FactCheckClaim }) {
 export default function Checker() {
     const auth = useAuth();
     const claims = auth.user?.profile as Record<string, string | undefined>;
-    const username = claims?.["cognito:username"] || "User";
+    const isGuest = localStorage.getItem("cc_guest") === "true";
+    const username = isGuest ? "Guest" : (claims?.["cognito:username"] || "User");
     const [url, setUrl] = useState("");
     const [result, setResult] = useState<Result>("idle");
     const [explanationOpen, setExplanationOpen] = useState(false);
     const [factCheckOpen, setFactCheckOpen] = useState(false);
+    const [skipAnalysis, setSkipAnalysis] = useState(() => localStorage.getItem("cc_skip_analysis") === "true");
+    const [skipFactCheck, setSkipFactCheck] = useState(() => localStorage.getItem("cc_skip_factcheck") === "true");
+
+    const toggleSkipAnalysis = (v: boolean) => {
+      setSkipAnalysis(v);
+      localStorage.setItem("cc_skip_analysis", String(v));
+    };
+    const toggleSkipFactCheck = (v: boolean) => {
+      setSkipFactCheck(v);
+      localStorage.setItem("cc_skip_factcheck", String(v));
+    };
 
     const isValidUrl = (val: string) => {
       try { return ["http:", "https:"].includes(new URL(val).protocol); }
@@ -86,7 +98,7 @@ export default function Checker() {
             "Content-Type": "application/json",
             ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
           },
-          body: JSON.stringify({ url }),
+          body: JSON.stringify({ url, skip_analysis: skipAnalysis, skip_factcheck: skipFactCheck }),
         });
 
         if (!response.ok) {
@@ -237,6 +249,26 @@ export default function Checker() {
                       className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-neutral-950 border border-neutral-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 text-neutral-100 placeholder:text-neutral-600 outline-none transition text-sm"
                       required
                     />
+                  </div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-neutral-400">
+                    <label className="flex items-center gap-2 cursor-pointer hover:text-neutral-200 transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={skipAnalysis}
+                        onChange={(e) => toggleSkipAnalysis(e.target.checked)}
+                        className="accent-blue-500 cursor-pointer"
+                      />
+                      <span>Skip AI analysis (faster)</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer hover:text-neutral-200 transition-colors">
+                      <input
+                        type="checkbox"
+                        checked={skipFactCheck}
+                        onChange={(e) => toggleSkipFactCheck(e.target.checked)}
+                        className="accent-blue-500 cursor-pointer"
+                      />
+                      <span>Skip fact check (faster)</span>
+                    </label>
                   </div>
                   <button
                     type="submit"

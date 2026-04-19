@@ -9,9 +9,10 @@ interface SidebarProps {
     username?: string;
     toggleSidebar?: () => void;
     onLogout?: () => void;
+    isGuest?: boolean;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({isCollapsed, username, toggleSidebar, onLogout}) => {
+const Sidebar: React.FC<SidebarProps> = ({isCollapsed, username, toggleSidebar, onLogout, isGuest}) => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -54,14 +55,16 @@ const Sidebar: React.FC<SidebarProps> = ({isCollapsed, username, toggleSidebar, 
                     <ShieldCheck size={18} />
                     {!isCollapsed && <span className="ml-3">Checker</span>}
                 </button>
-                <button
-                    title="Recently Checked"
-                    onClick={() => navigate("/recents")}
-                    className={navBtnClass("/recents")}
-                >
-                    <Clock4 size={18} />
-                    {!isCollapsed && <span className="ml-3">Recently Checked</span>}
-                </button>
+                {!isGuest && (
+                    <button
+                        title="Recently Checked"
+                        onClick={() => navigate("/recents")}
+                        className={navBtnClass("/recents")}
+                    >
+                        <Clock4 size={18} />
+                        {!isCollapsed && <span className="ml-3">Recently Checked</span>}
+                    </button>
+                )}
                 <button
                     title="About"
                     onClick={() => navigate("/about")}
@@ -74,24 +77,36 @@ const Sidebar: React.FC<SidebarProps> = ({isCollapsed, username, toggleSidebar, 
 
             <div className="py-3 px-3">
                 <div className="w-full h-px bg-neutral-800 mb-3 opacity-60"></div>
-                <button
-                    onClick={() => navigate("/profile")}
-                    className={`flex items-center rounded-lg cursor-pointer transition-all duration-200 border
-                        ${location.pathname === "/profile"
-                            ? "bg-neutral-800 border-neutral-700"
-                            : "bg-transparent hover:bg-neutral-800 border-transparent"}
-                        ${isCollapsed ? "w-full h-12 justify-center px-0" : "w-full h-12 px-3 py-2 justify-start"}`}
-                >
-                    <div className="flex justify-center items-center rounded-full overflow-hidden bg-linear-to-b from-blue-600 to-blue-900 text-white font-bold select-none w-8 h-8 text-sm ring-2 ring-blue-500/30 shrink-0">
-                        {username ? username[0].toUpperCase() : "U"}
+                {!isGuest ? (
+                    <button
+                        onClick={() => navigate("/profile")}
+                        className={`flex items-center rounded-lg cursor-pointer transition-all duration-200 border
+                            ${location.pathname === "/profile"
+                                ? "bg-neutral-800 border-neutral-700"
+                                : "bg-transparent hover:bg-neutral-800 border-transparent"}
+                            ${isCollapsed ? "w-full h-12 justify-center px-0" : "w-full h-12 px-3 py-2 justify-start"}`}
+                    >
+                        <div className="flex justify-center items-center rounded-full overflow-hidden bg-linear-to-b from-blue-600 to-blue-900 text-white font-bold select-none w-8 h-8 text-sm ring-2 ring-blue-500/30 shrink-0">
+                            {username ? username[0].toUpperCase() : "U"}
+                        </div>
+                        {!isCollapsed && <span className="pl-2 text-sm text-neutral-300 truncate">{username}</span>}
+                    </button>
+                ) : (
+                    <div
+                        className={`flex items-center rounded-lg border border-transparent
+                            ${isCollapsed ? "w-full h-12 justify-center px-0" : "w-full h-12 px-3 py-2 justify-start"}`}
+                    >
+                        <div className="flex justify-center items-center rounded-full overflow-hidden bg-neutral-700 text-white font-bold select-none w-8 h-8 text-sm ring-2 ring-neutral-600 shrink-0">
+                            G
+                        </div>
+                        {!isCollapsed && <span className="pl-2 text-sm text-neutral-400 truncate">Guest</span>}
                     </div>
-                    {!isCollapsed && <span className="pl-2 text-sm text-neutral-300 truncate">{username}</span>}
-                </button>
+                )}
                 <button
                     onClick={onLogout}
                     className="w-full bg-neutral-800 hover:bg-neutral-700 text-neutral-400 hover:text-neutral-100 font-medium py-2 px-3 mt-2 rounded-lg transition-colors duration-150 cursor-pointer text-sm"
                 >
-                    {isCollapsed ? "↩" : "Sign out"}
+                    {isCollapsed ? "↩" : (isGuest ? "Exit guest mode" : "Sign out")}
                 </button>
             </div>
 

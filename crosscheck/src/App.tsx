@@ -21,6 +21,7 @@ function App() {
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isGuest, setIsGuest] = useState(() => localStorage.getItem("cc_guest") === "true");
 
   const SIDEBAR_OPEN_WIDTH = 256;
   const SIDEBAR_COLLAPSED_WIDTH = 72;
@@ -33,13 +34,25 @@ function App() {
 
   // codex generated these two lines because accessing the username is ridiculously complicated for some reason
   const claims = auth.user?.profile as Record<string, string | undefined>;
-  const username = claims?.["cognito:username"] || "User";
+  const username = isGuest ? "Guest" : (claims?.["cognito:username"] || "User");
 
   // log out handler
   const logout = async () => {
+    if (isGuest) {
+      localStorage.removeItem("cc_guest");
+      setIsGuest(false);
+      navigate("/");
+      return;
+    }
     await auth.removeUser();
     auth.clearStaleState?.();
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+  };
+
+  const continueAsGuest = () => {
+    localStorage.setItem("cc_guest", "true");
+    setIsGuest(true);
+    navigate("/");
   };
 
   // privacy policy is accessible whether logged in or not
@@ -71,8 +84,8 @@ function App() {
     );
   }
 
-  // if the user is authenticated, render the app's main content
-  if (auth.isAuthenticated) {
+  // if the user is authenticated (or in guest mode), render the app's main content
+  if (auth.isAuthenticated || isGuest) {
     return (
       <div className="flex min-h-screen bg-neutral-950 text-neutral-100 overflow-x-hidden">
         {/* Desktop sidebar */}
@@ -81,6 +94,7 @@ function App() {
           toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           username={username}
           onLogout={logout}
+          isGuest={isGuest}
         />
 
         {/* Mobile top header */}
@@ -115,13 +129,15 @@ function App() {
             <ShieldCheck size={20} />
             <span className="text-xs">Checker</span>
           </button>
-          <button
-            onClick={() => navigate("/recents")}
-            className="flex flex-col items-center gap-1 text-neutral-500 hover:text-blue-400 transition py-2 px-3"
-          >
-            <Clock4 size={20} />
-            <span className="text-xs">Recents</span>
-          </button>
+          {!isGuest && (
+            <button
+              onClick={() => navigate("/recents")}
+              className="flex flex-col items-center gap-1 text-neutral-500 hover:text-blue-400 transition py-2 px-3"
+            >
+              <Clock4 size={20} />
+              <span className="text-xs">Recents</span>
+            </button>
+          )}
           <button
             onClick={() => navigate("/about")}
             className="flex flex-col items-center gap-1 text-neutral-500 hover:text-blue-400 transition py-2 px-3"
@@ -129,15 +145,27 @@ function App() {
             <Info size={20} />
             <span className="text-xs">About</span>
           </button>
-          <button
-            onClick={() => navigate("/profile")}
-            className="flex flex-col items-center gap-1 text-neutral-500 hover:text-blue-400 transition py-2 px-3"
-          >
-            <div className="w-5 h-5 rounded-full bg-linear-to-b from-blue-600 to-blue-900 flex items-center justify-center text-white text-xs font-bold">
-              {username[0].toUpperCase()}
-            </div>
-            <span className="text-xs">Profile</span>
-          </button>
+          {!isGuest ? (
+            <button
+              onClick={() => navigate("/profile")}
+              className="flex flex-col items-center gap-1 text-neutral-500 hover:text-blue-400 transition py-2 px-3"
+            >
+              <div className="w-5 h-5 rounded-full bg-linear-to-b from-blue-600 to-blue-900 flex items-center justify-center text-white text-xs font-bold">
+                {username[0].toUpperCase()}
+              </div>
+              <span className="text-xs">Profile</span>
+            </button>
+          ) : (
+            <button
+              onClick={logout}
+              className="flex flex-col items-center gap-1 text-neutral-500 hover:text-blue-400 transition py-2 px-3"
+            >
+              <div className="w-5 h-5 rounded-full bg-neutral-700 flex items-center justify-center text-white text-xs font-bold">
+                G
+              </div>
+              <span className="text-xs">Exit</span>
+            </button>
+          )}
         </nav>
       </div>
     );
@@ -205,6 +233,17 @@ function App() {
               onClick={() => auth.signinRedirect()}
             >
               Sign in / Sign up
+            </button>
+            <div className="flex items-center gap-3">
+              <div className="flex-1 h-px bg-neutral-800"></div>
+              <span className="text-xs text-neutral-600 uppercase tracking-wider">or</span>
+              <div className="flex-1 h-px bg-neutral-800"></div>
+            </div>
+            <button
+              className="w-full py-2.5 px-4 rounded-lg bg-neutral-800 hover:bg-neutral-700 active:scale-95 text-neutral-200 font-semibold transition-all duration-150 cursor-pointer border border-neutral-700"
+              onClick={continueAsGuest}
+            >
+              Continue as guest
             </button>
             <p className="text-center text-xs text-neutral-600">
               By signing up you agree to the{" "}

@@ -16,7 +16,7 @@ export default function About() {
       <div>
         <h1 className="text-xl font-bold text-neutral-100">About</h1>
         <p className="text-neutral-400 text-sm mt-1">
-          CrossCheck is a research project exploring model-backed real-time misinformation detection, built by Ryan Coones, Jeremy McPaul, and Lucas Fischer.
+          CrossCheck is a research project exploring model-backed real-time misinformation detection.
         </p>
       </div>
 
